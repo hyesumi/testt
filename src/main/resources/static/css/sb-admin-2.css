@@ -118,6 +118,7 @@ ul ul,
 ol ul,
 ul ol {
   margin-bottom: 0;
+  list-style-type: none;
 }
 
 dt {

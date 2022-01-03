@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.example.SessionConst;
 import com.example.login.LoginForm;
 import com.example.member.Member;
 import com.example.service.LoginService;
@@ -29,11 +30,11 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String loginV4(@Valid @ModelAttribute LoginForm form, BindingResult bindingResult,
-                          @RequestParam(defaultValue= "/") String redirectURL, HttpServletRequest request){
+    public String loginV3(@Valid @ModelAttribute LoginForm form, BindingResult bindingResult, HttpServletRequest request){
         if(bindingResult.hasErrors()){
             return "login/loginForm";
         }
+
         if(!StringUtils.hasText(form.getLoginId())){
             bindingResult.addError(new FieldError("form","loginId",form.getLoginId(),false,null,null,"아이디가 입력되지 않았습니다."));
             return "login/loginForm";
@@ -45,15 +46,17 @@ public class LoginController {
         }
 
         Member loginMember = loginService.login(form.getLoginId(),form.getPassword());
+
         if(loginMember == null){
-            bindingResult.reject("loginFail","아이디 또는 비밀번호가 맞지 않습니다.");
+            bindingResult.reject("loginFail"," 아이디 또는 비밀번호가 맞지 않습니다.");
             return "login/loginForm";
         }
+
         HttpSession session = request.getSession();
-        session.setAttribute("member", loginMember);
+        session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
         //sessionManager.createSession(loginMember,response);
 
-        return "view/hello";
+        return "redirect:/";
     }
 
     @GetMapping("/logout")
