@@ -35,4 +35,9 @@ public class HomeController {
         return "view/member/list";
     }
 
+    @RequestMapping(value="/noAuth")
+    public String noAuthentication(){
+
+        return "/noAuth";
+    }
 }
