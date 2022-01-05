@@ -23,7 +23,13 @@ public class TestDataInit {
         member.setPassword("test!");
         member.setName("테스터");
 
+        Member member2 = new Member();
+        member2.setLoginId("test2");
+        member2.setPassword("test!");
+        member2.setName("테스터2");
+
         memberRepository.save(member);
+        memberRepository.save(member2);
     }
 
 }

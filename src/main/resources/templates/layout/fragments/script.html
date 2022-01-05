@@ -6,6 +6,7 @@
 
 
     <!-- Bootstrap core JavaScript-->
+
     <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
@@ -20,66 +21,6 @@
     <!-- Page level custom scripts -->
     <script th:src="@{/js/demo/chart-area-demo.js}"></script>
     <script th:src="@{/js/demo/chart-pie-demo.js}"></script>
-
-    <script>
-
-        var minute = 29;
-        var second = 59;
-
-        function getCookie() {
-
-            // var param = {
-            //     email : asciiToChar(userEmail)
-            // }
-            //
-            // $.ajax({
-            //     url:"/loginCheck",
-            //     type:"post",
-            //     contentType: "application/json",
-            //     data: JSON.stringify(param),
-            //     dataType:"json",
-            //     success : function (data) {
-            //         if(data != true){
-            //             clearInterval(loginCheck);
-            //             alert("로그인 세션이 만료되었습니다. 다시 로그인 부탁드립니다.");
-            //             document.location.href="/auth/login";
-            //         }
-            //     }
-            // });
-        }
-
-        function calSessionTime(){
-            var time = "";
-
-            if(minute < 0){
-                getCookie();
-            } else {
-                if(second < 10){
-                    time = minute + ":0" +second;
-                } else {
-                    time = minute + ":" +second;
-                }
-
-                $('#sessionTime').text(time);
-
-                if(second == 0){
-                    minute--;
-                    second = 59;
-                } else {
-                    second--;
-                }
-            }
-        }
-
-        var deleteCookie = function(name) {
-            document.cookie = name + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;';
-        }
-
-        const loginCheck = setInterval(function() {
-            calSessionTime();//호출될 코드
-        }, 1000); //delay 시간
-
-    </script>
 
 </th:block>
 </html>
