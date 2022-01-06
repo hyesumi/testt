@@ -1,4 +1,4 @@
-package com.example.member;
+package com.example.dto;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;

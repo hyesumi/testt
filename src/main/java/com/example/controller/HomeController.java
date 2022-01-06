@@ -2,7 +2,7 @@ package com.example.controller;
 
 import com.example.SessionConst;
 import com.example.login.LoginForm;
-import com.example.member.Member;
+import com.example.dto.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -32,7 +32,7 @@ public class HomeController {
         }
 
         model.addAttribute("member",loginmember);
-        return "view/member/list";
+        return "redirect:/member/list";
     }
 
     @RequestMapping(value="/noAuth")

@@ -40,15 +40,11 @@
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                            aria-expanded="true" aria-controls="collapseTwo">
                             <i class="fas fa-fw fa-cog"></i>
-                            <span>Components</span>
+                            <span>사용자 관리</span>
                         </a>
                         <ul class="hide" style="display: none">
-                            <a class="collapse-item" th:href="@{/member/list}">member list</a>
-                            <li>메뉴1-2</li>
-                            <li>메뉴1-3</li>
-                            <li>메뉴1-4</li>
-                            <li>메뉴1-5</li>
-                            <li>메뉴1-6</li>
+                            <li><a class="collapse-item" th:href="@{/member/list}">사용자 조회</a></li>
+                            <li><a class="collapse-item" th:href="@{/member/list}">메뉴2</a></li>
                         </ul>
                     </li>
 
@@ -68,15 +64,6 @@
                         </ul>
                     </li>
                 </ul>
-            </div>
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-               aria-expanded="true" aria-controls="collapseTwo">
-                <i class="fas fa-fw fa-cog"></i>
-                <span>Components</span>
-            </a>
-            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                <a class="collapse-item" th:href="@{/member/list}">member list</a>
-                <a class="collapse-item" href="cards.html">Cards</a>
             </div>
         </li>
 

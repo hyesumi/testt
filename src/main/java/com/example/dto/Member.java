@@ -1,4 +1,4 @@
-package com.example.member;
+package com.example.dto;
 
 import lombok.Data;
 
@@ -13,4 +13,8 @@ public class Member {
     private String name;
 
     private String password;
+
+    private String auth;
+
+    private String createdDt;
 }

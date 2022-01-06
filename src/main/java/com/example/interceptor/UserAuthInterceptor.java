@@ -1,7 +1,7 @@
 package com.example.interceptor;
 
 import com.example.SessionConst;
-import com.example.member.Member;
+import com.example.dto.Member;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
