@@ -36,7 +36,7 @@ public class UserAuthInterceptor implements HandlerInterceptor {
                 //response.sendRedirect("/error");
                 response.setContentType("text/html; charset=utf-8");
                 PrintWriter printwriter = response.getWriter();
-                printwriter.print("<script>alert('권한이 없습니다.'); location.href='/noAuth';</script>");
+                printwriter.print("<script>alert('권한이 없습니다.');</script>");
                 printwriter.flush();
                 printwriter.close();
                 return false;

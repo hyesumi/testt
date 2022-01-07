@@ -29,7 +29,7 @@
 
         <!-- Heading -->
         <div class="sidebar-heading">
-            Interface
+            Admin
         </div>
 
         <!-- Nav Item - Pages Collapse Menu -->
@@ -44,7 +44,6 @@
                         </a>
                         <ul class="hide" style="display: none">
                             <li><a class="collapse-item" th:href="@{/member/list}">사용자 조회</a></li>
-                            <li><a class="collapse-item" th:href="@{/member/list}">메뉴2</a></li>
                         </ul>
                     </li>
 
@@ -54,35 +53,11 @@
                             <i class="fas fa-fw fa-cog"></i>
                             <span>Utilities</span>
                         </a>
-                        <ul class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                            <li>메뉴2-1</li>
-                            <li>메뉴2-2</li>
-                            <li>메뉴2-3</li>
-                            <li>메뉴2-4</li>
-                            <li>메뉴2-5</li>
-                            <li>메뉴2-6</li>
+                        <ul class="hide" style="display: none">
+                            <li><a class="collapse-item" th:href="@{/member/list}">사용자 조회</a></li>
                         </ul>
                     </li>
                 </ul>
-            </div>
-        </li>
-
-        <!-- Nav Item - Utilities Collapse Menu -->
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-               aria-expanded="true" aria-controls="collapseUtilities">
-                <i class="fas fa-fw fa-wrench"></i>
-                <span>Utilities</span>
-            </a>
-            <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                 data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Custom Utilities:</h6>
-                    <a class="collapse-item" href="utilities-color.html">Colors</a>
-                    <a class="collapse-item" href="utilities-border.html">Borders</a>
-                    <a class="collapse-item" href="utilities-animation.html">Animations</a>
-                    <a class="collapse-item" href="utilities-other.html">Other</a>
-                </div>
             </div>
         </li>
 
@@ -120,13 +95,6 @@
             <a class="nav-link" href="charts.html">
                 <i class="fas fa-fw fa-chart-area"></i>
                 <span>Charts</span></a>
-        </li>
-
-        <!-- Nav Item - Tables -->
-        <li class="nav-item">
-            <a class="nav-link" href="tables.html">
-                <i class="fas fa-fw fa-table"></i>
-                <span>Tables</span></a>
         </li>
 
         <!-- Divider -->

@@ -9,9 +9,7 @@
             <div class="container-fluid">
                 <h1 class="h3 mb-2 text-gray-800">사용자 조회</h1>
 
-                <button class="btn-change"
-                        onclick="location.href='items.html'"
-                        th:attr="onclick=|check()|" type="button" >등록</button>
+                <button class="w-25 btn btn-primary btn-sm" th:attr="onclick=|register()|" type="button" style="float: right;">등록</button>
 
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
@@ -38,42 +36,166 @@
                                     <td><span th:text="${list.name}"></span></td>
                                     <td><span th:text="${list.auth}"></span></td>
                                     <td><span th:text="${list.createdDt}"></span></td>
-                                    <td><button th:if="${session.LoginMembers.auth}=='Super Admin'">변경</button></td>
+                                    <td><button class="w-25 btn btn-primary btn-sm" th:if="${session.LoginMembers.auth}=='Super Admin'">변경</button></td>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-
             </div>
             <!-- /.container-fluid -->
         </div>
     </div>
 
+    <ul class="pagination" id="pagination"></ul>
+
     <!-- Modal -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Modal 제목</h4>
+                    <h4 class="modal-title" id="myModalLabel">사용자 등록</h4>
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
                 </div>
                 <div class="modal-body">
-                    Modal 내용
+                    <div class="modal-body" id="modal_upload" >
+                        <table class="table table_custom" id="modal_table">
+                            <colgroup>
+                                <col width="20%">
+                                <col width="30%">
+                                <col width="20%">
+                                <col width="30%">
+                            </colgroup>
+                            <tbody id="modal_tbody">
+                            <tr>
+                                <th><span class="required"></span>아이디</th>
+                                <td colspan="3">
+                                    <div class="col-sm-9">
+                                        <input id="id" name="subject" type="text" class="form-control" placeholder="">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><span class="required"></span>이름</th>
+                                <td colspan="3">
+                                    <div class="col-sm-9" style="width: 100%;">
+                                        <input id="name" name="subject" type="text" class="form-control" placeholder="">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><span class="required"></span>그룹</th>
+                                <td>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" value="" name="authentication" id="authentication" style="width:150px;">
+                                            <option value="S">Super Admin</option>
+                                            <option value="N">Admin</option>
+                                            <option value="U" selected>User</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <span>패스워드는 초기 패스워드로 생성됩니다.</span>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" id="btnSubmit">등록</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script th:inline="javascript">
-        function check() {
+        function register() {
             $("#myModal").modal('show');
         }
 
+        window.addEventListener("DOMContentLoaded", function(event) {
+            let visiblePages = 10;
+            var totalSize = "[[${totalSize}]]";
+            let perpage = "[[${perPage}]]";
+            let totalPages = (totalSize/perpage);
+            if(totalSize % perpage > 0 || totalPages == 0){
+                totalPages = totalPages + 1;
+            }
+
+            // Paging Option
+            let defaultOps = {
+                totalPages: totalPages,
+                visiblePages: visiblePages,
+                startPage : 1,
+                first: "<<", last : ">>",
+                prev : "<", next : ">",
+                initiateStartPageClick: false,
+                onPageClick: function (event, page) {
+                    console.info(page + ' (from options)');
+                }
+            }
+
+            // Paging Callback Func
+            let pagingCallback = function (event, page) {
+                console.info(page + ' (from event listening)');
+                search.currentPage = page;
+
+            }
+
+            window.defaultOps = defaultOps;
+            window.pagingCallback = pagingCallback;
+            window.totalSize = totalSize;
+            $('#pagination').twbsPagination(defaultOps).on('page', pagingCallback);
+
+        });
+
+        //확인 클릭시
+        $("#btnSubmit").click(function() {
+            var auth = $('#authentication').val();
+
+            if (auth == null || auth == '') {
+                alert('권한을 선택해주세요');
+                return false;
+            }
+            if($('#name').val() == null || $('#name').val() == '') {
+                alert('이름을 입력해주세요');
+                return false;
+            }
+            if($('#id').val() == null || $('#id').val() == '') {
+                alert('아이디를 입력해주세요');
+                return false;
+            }
+
+            submitStart();
+        });
+
+        function submitStart() {
+            var data = {
+                auth : $('#authentication').val(),
+                name : $('#name').val(),
+                loginId : $('#id').val()
+            };
+
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                url: "/member/reg",
+                data: JSON.stringify(data),
+                dataType: 'json',
+                async : true,
+                success: function (data) {
+                    if (data.message=="SUCCESS") {
+                        alert("등록되었습니다.");
+                        location.reload();
+                    } else {
+                        alert("등록에 실패하였습니다.\n 관리자에게 문의해주세요.");
+                    }
+                }, error: function (e) {
+                    console.log(e);
+                }
+            });
+        }
     </script>
 
 </div>

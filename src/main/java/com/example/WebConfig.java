@@ -15,15 +15,16 @@ public class WebConfig implements WebMvcConfigurer {
                 .order(1)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/*.ico","/error","/*.css","/*.js");
-//
+
 //        registry.addInterceptor(new LoginCheckInterceptor())
 //                .order(2)
 //                .addPathPatterns("/**")
-//                .excludePathPatterns("/login","/logout","/css/**","/*.ico","/error");
+//                .excludePathPatterns("/login","/logout","/css/**","/*.ico","/error","/login/loginForm");
 
         registry.addInterceptor(new UserAuthInterceptor())
                 .order(2)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/login","/logout","/css/**","/*.ico","/error","/login/loginForm","","/noAuth");
+
     }
 }
