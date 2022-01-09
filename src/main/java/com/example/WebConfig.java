@@ -2,6 +2,7 @@ package com.example;
 
 import com.example.interceptor.LogInterceptor;
 import com.example.interceptor.LoginCheckInterceptor;
+import com.example.interceptor.PermissionInterceptor;
 import com.example.interceptor.UserAuthInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -25,6 +26,11 @@ public class WebConfig implements WebMvcConfigurer {
                 .order(2)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/login","/logout","/css/**","/*.ico","/error","/login/loginForm","","/noAuth");
+
+        registry.addInterceptor(new PermissionInterceptor())
+                .order(3)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/login","/logout","/css/**","/*.ico","/error","/login/loginForm","","/noAuth","/member/**");
 
     }
 }

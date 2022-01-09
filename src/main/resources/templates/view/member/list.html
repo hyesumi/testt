@@ -9,7 +9,7 @@
             <div class="container-fluid">
                 <h1 class="h3 mb-2 text-gray-800">사용자 조회</h1>
 
-                <button class="w-25 btn btn-primary btn-sm" th:attr="onclick=|register()|" type="button" style="float: right;">등록</button>
+                <button class="w-25 btn btn-primary btn-sm" th:attr="onclick=|register()|" type="button">등록</button>
 
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
@@ -36,7 +36,7 @@
                                     <td><span th:text="${list.name}"></span></td>
                                     <td><span th:text="${list.auth}"></span></td>
                                     <td><span th:text="${list.createdDt}"></span></td>
-                                    <td><button class="w-25 btn btn-primary btn-sm" th:if="${session.LoginMembers.auth}=='Super Admin'">변경</button></td>
+                                    <td><button class="btn btn-primary btn-sm" th:if="${session.LoginMembers.auth}=='Super Admin'">변경</button></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -48,7 +48,9 @@
         </div>
     </div>
 
-    <ul class="pagination" id="pagination"></ul>
+    <div class="paging-div">
+        <ul class="pagination" id="pagination"></ul>
+    </div>
 
     <!-- Modal -->
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
