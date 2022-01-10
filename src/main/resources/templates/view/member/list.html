@@ -31,12 +31,12 @@
                                 </thead>
                                 <tbody>
                                 <tr th:each="list : ${memberList}">
-                                    <td><span th:text="${totalSize}-${totalSize}"></span></td>
-                                    <td><span th:text="${list.loginId}"></span></td>
-                                    <td><span th:text="${list.name}"></span></td>
-                                    <td><span th:text="${list.auth}"></span></td>
-                                    <td><span th:text="${list.createdDt}"></span></td>
-                                    <td><button class="btn btn-primary btn-sm" th:if="${session.LoginMembers.auth}=='Super Admin'">변경</button></td>
+<!--                                    <td><span th:text="${totalSize}-${totalSize}"></span></td>-->
+                                    <td><span th:text="${list.id}"></span></td>
+<!--                                    <td><span th:text="${list.pw}"></span></td>-->
+<!--                                    <td><span th:text="${list.auth}"></span></td>-->
+<!--                                    <td><span th:text="${list.createdDt}"></span></td>-->
+<!--                                    <td><button class="btn btn-primary btn-sm" th:if="${session.LoginMembers.auth}=='Super Admin'">변경</button></td>-->
                                 </tr>
                                 </tbody>
                             </table>

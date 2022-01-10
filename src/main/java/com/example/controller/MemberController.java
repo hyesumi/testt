@@ -2,7 +2,9 @@ package com.example.controller;
 
 import com.example.dto.Member;
 import com.example.dto.PagingInfo;
+import com.example.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,22 +20,34 @@ import java.util.List;
 @Controller
 @RequestMapping("member")
 public class MemberController {
+
+    private MemberService memberService;
+    @Autowired
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
+    }
+
+
     @RequestMapping("/list")
     public String memberList(Model model, HttpServletRequest request) {
         PagingInfo pagingInfo = new PagingInfo();
         pagingInfo.setCurrentPage(1);
+//
+//        Member member = new Member();
+//        member.setLoginId("test");
+//        member.setPassword("test!");
+//        member.setName("테스터");
+//
+//        List<Member> memberList = new ArrayList<>();
+//        memberList.add(member);
+//
 
-        Member member = new Member();
-        member.setLoginId("test");
-        member.setPassword("test!");
-        member.setName("테스터");
+        List<Member> memberList = memberService.getMemberList();
+        System.out.println(memberList);
+       model.addAttribute("memberList",memberList);
+//        model.addAttribute("totalSize",memberList.size());
+//        model.addAttribute("perPage", pagingInfo.getPerPage());
 
-        List<Member> memberList = new ArrayList<>();
-        memberList.add(member);
-
-        model.addAttribute("memberList",memberList);
-        model.addAttribute("totalSize",memberList.size());
-        model.addAttribute("perPage", pagingInfo.getPerPage());
         return "view/member/list";
     }
 
