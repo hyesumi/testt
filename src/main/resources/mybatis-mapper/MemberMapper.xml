@@ -6,7 +6,24 @@
 <mapper namespace="com.example.mapper.MemberMapper">
 
     <select id="getMemberList" resultType="Member">
-        select * from login
+        SELECT
+            user_id AS id,
+            user_email AS loginId,
+            user_name AS name,
+            user_role AS role,
+            created_dt AS createdDt
+        FROM auth_user
+        WHERE use_yn = 'Y'
+    </select>
+
+
+    <select id="findUserByEmail" resultType="Member" parameterType="String">
+        SELECT
+            user_email AS id,
+            user_role AS roleId,
+            user_name AS name
+        FROM auth_user
+            AND a.user_email = #{email}
     </select>
 
 </mapper>

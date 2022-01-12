@@ -21,7 +21,6 @@
                             <table class="table table-bordered" id="dataTable" width="70%" cellspacing="0">
                                 <thead>
                                 <tr>
-                                    <th>번호</th>
                                     <th>아이디</th>
                                     <th>이름</th>
                                     <th>권한</th>
@@ -32,11 +31,13 @@
                                 <tbody>
                                 <tr th:each="list : ${memberList}">
 <!--                                    <td><span th:text="${totalSize}-${totalSize}"></span></td>-->
-                                    <td><span th:text="${list.id}"></span></td>
-<!--                                    <td><span th:text="${list.pw}"></span></td>-->
-<!--                                    <td><span th:text="${list.auth}"></span></td>-->
-<!--                                    <td><span th:text="${list.createdDt}"></span></td>-->
-<!--                                    <td><button class="btn btn-primary btn-sm" th:if="${session.LoginMembers.auth}=='Super Admin'">변경</button></td>-->
+                                    <td><span><a th:text="${list.loginId}" href="" th:attr="onclick=|userDetail()|"></a></span></td>
+<!--                                    <td><span><a th:text="${list.loginId}" href="" th:attr="onclick=|userDetail('${list.loginId}')|"></a></span></td>-->
+                                    <td><span th:text="${list.loginId}"></span></td>
+                                    <td><span th:text="${list.name}"></span></td>
+                                    <td><span th:text="${list.role}"></span></td>
+                                    <td><span th:text="${list.createdDt}"></span></td>
+                                    <td><button class="btn btn-primary btn-sm" th:if="${session.LoginMembers.role}=='Super Admin'">변경</button></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -74,7 +75,7 @@
                                 <th><span class="required"></span>아이디</th>
                                 <td colspan="3">
                                     <div class="col-sm-9">
-                                        <input id="id" name="subject" type="text" class="form-control" placeholder="">
+                                        <input id="id" type="text" class="form-control" placeholder="">
                                     </div>
                                 </td>
                             </tr>
@@ -82,7 +83,7 @@
                                 <th><span class="required"></span>이름</th>
                                 <td colspan="3">
                                     <div class="col-sm-9" style="width: 100%;">
-                                        <input id="name" name="subject" type="text" class="form-control" placeholder="">
+                                        <input id="name" type="text" class="form-control" placeholder="">
                                     </div>
                                 </td>
                             </tr>
@@ -90,7 +91,7 @@
                                 <th><span class="required"></span>그룹</th>
                                 <td>
                                     <div class="col-sm-9">
-                                        <select class="form-control" value="" name="authentication" id="authentication" style="width:150px;">
+                                        <select class="form-control" value="" name="roleId" id="roleId" style="width:150px;">
                                             <option value="S">Super Admin</option>
                                             <option value="N">Admin</option>
                                             <option value="U" selected>User</option>
@@ -112,6 +113,11 @@
     </div>
 
     <script th:inline="javascript">
+
+        function userDetail() {
+            alert("test");
+        }
+
         function register() {
             $("#myModal").modal('show');
         }
@@ -154,7 +160,7 @@
 
         //확인 클릭시
         $("#btnSubmit").click(function() {
-            var auth = $('#authentication').val();
+            var auth = $('#roleId').val();
 
             if (auth == null || auth == '') {
                 alert('권한을 선택해주세요');

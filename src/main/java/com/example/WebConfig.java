@@ -25,12 +25,12 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new UserAuthInterceptor())
                 .order(2)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/login","/logout","/css/**","/*.ico","/error","/login/loginForm","","/noAuth");
+                .excludePathPatterns("/login","/logout","/css/**","/*.ico","/error","/login/loginForm","","/noAuth","/vendor/**","/scss/**","/img/**","/js/**");
 
         registry.addInterceptor(new PermissionInterceptor())
                 .order(3)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/login","/logout","/css/**","/*.ico","/error","/login/loginForm","","/noAuth","/member/**");
+                .excludePathPatterns("/login","/logout","/css/**","/*.ico","/error","/login/loginForm","","/noAuth","/member/**","/vendor/**","/scss/**","/img/**","/js/**");
 
     }
 }

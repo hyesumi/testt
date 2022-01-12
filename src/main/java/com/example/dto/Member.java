@@ -7,14 +7,9 @@ import lombok.Data;
 public class Member {
 
     private Long id;
-
     private String loginId;
-
     private String name;
-
     private String password;
-
-    private String auth;
-
+    private String role;
     private String createdDt;
 }

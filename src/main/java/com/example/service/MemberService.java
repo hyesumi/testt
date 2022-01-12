@@ -20,4 +20,8 @@ public class MemberService {
     public List<Member> getMemberList() {
         return memberMapper.getMemberList();
     }
+
+    public Member findUserByEmail(String email){
+        return memberMapper.findUserByEmail(email);
+    }
 }

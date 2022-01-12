@@ -22,7 +22,7 @@ public class TestDataInit {
         member.setLoginId("test");
         member.setPassword("test!");
         member.setName("테스터");
-        member.setAuth("Super Admin");
+        member.setRole("Super Admin");
 
         Member member2 = new Member();
         member2.setLoginId("test2");
