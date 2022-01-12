@@ -1,10 +1,12 @@
 package com.example.controller;
 
+import com.example.dto.EditMember;
 import com.example.dto.Member;
 import com.example.dto.PagingInfo;
 import com.example.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -65,20 +67,60 @@ public class MemberController {
     public ResponseEntity<Member>detailAuthManager(@RequestParam(required = false) String email) {
 
         Member member = memberService.findUserByEmail(email);
-        System.out.println(member.toString());
         return ResponseEntity.ok().body(member);
 
+    }
 
-//        String registerid = SecurityContextHolder.getContext().getAuthentication().getName();
-//        String key = environment.getProperty("uuid.aes.key");
-//
-//        UxUser manager = authService.findUserByEmail(email);
-//        List<UxUser> userList = authService.findUserRole(registerid);
-//        manager.setAuthRole(userList.get(0).getRole());
-//
-//        log.info(String.format("detailAuthManager|%s|%s|%s|%s|%s|%s","사용자조회","search",AESCrypto.encrypt(key,registerid),commonService.getRemoteAddr(request),commonService.getRemoteHost(request),AESCrypto.encrypt(key,email)));
-//
-//        return ResponseEntity.ok().body(manager);
+    @RequestMapping(value={"/edit"}, method=RequestMethod.POST)
+    public ResponseEntity<HashMap<String,Object>>  editAuthAdminList(HttpServletRequest request, @RequestBody EditMember member) {
+        HashMap<String,Object> map = new HashMap<>();
 
+        try{
+            if (member.getEditType().equals("add")) {
+                System.out.println("사용자 추가");
+                map.put("message", "SUCCESS");
+            } else if (member.getEditType().equals("update")) {
+
+            }
+
+        }catch(Exception e){
+
+        }
+
+        return  ResponseEntity.ok().body(map);
+
+//        try {
+//            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+//            if (uxUser.getEditType().equals("add")) {
+//                uxUser.setPassword(passwordEncoder.encode("asdf1234@@!!"));
+//                authService.insertAuthAdminList(uxUser);
+//                authService.insertAuthRole(uxUser);
+//                uxUser.setType("add");
+//            } else if (uxUser.getEditType().equals("update")) {
+//                authService.updateAuthAdminList(uxUser);
+//                uxUser.setType("role");
+//            } else if(uxUser.getEditType().equals("edit")){
+//                UxUser user = authService.checkPassword(uxUser);
+//                if(BCrypt.checkpw(uxUser.getPassword(),user.getPassword())){
+//                    if(uxUser.getNewpassword().equals(uxUser.getPassword())){
+//                        return ResponseEntity.ok().body(new UxResponse(DefResponse.ERR909));
+//                    } else if(uxUser.getNewpassword().equals(uxUser.getEmail())){
+//                        return ResponseEntity.ok().body(new UxResponse(DefResponse.ERR909));
+//                    }
+//                    uxUser.setPassword(passwordEncoder.encode(uxUser.getNewpassword()));
+//                    authService.updateUserPassword(uxUser);
+//                    uxUser.setType("edit");
+//                } else {
+//                    return ResponseEntity.ok().body(new UxResponse(DefResponse.ERR906));
+//                }
+//            }
+//            authService.updateAuthHistory(uxUser);
+//            resCode.writeUpdateLog(request,uxUser,uxUser.getId());
+//        } catch (DataAccessException e) {
+//            resCode.writeUpdateFailLog(request,uxUser);
+//            return ResponseEntity.ok().body(new UxResponse(DefResponse.ERR9XX));
+//        }
+//
+//        return ResponseEntity.ok().body(new UxResponse(DefResponse.SUCCESS));
     }
 }
