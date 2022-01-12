@@ -30,7 +30,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new PermissionInterceptor())
                 .order(3)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/login","/logout","/css/**","/*.ico","/error","/login/loginForm","","/noAuth","/member/**","/vendor/**","/scss/**","/img/**","/js/**");
+                .excludePathPatterns("/login","/logout","/css/**","/*.ico","/error","/login/loginForm","","/noAuth","/vendor/**","/scss/**","/img/**","/js/**");
 
     }
 }
