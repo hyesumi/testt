@@ -17,15 +17,15 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns("/*.ico","/error","/*.css","/*.js");
 
-//        registry.addInterceptor(new LoginCheckInterceptor())
-//                .order(2)
-//                .addPathPatterns("/**")
-//                .excludePathPatterns("/login","/logout","/css/**","/*.ico","/error","/login/loginForm");
-
-        registry.addInterceptor(new UserAuthInterceptor())
+        registry.addInterceptor(new LoginCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/login","/logout","/css/**","/*.ico","/error","/login/loginForm","","/noAuth","/vendor/**","/scss/**","/img/**","/js/**");
+                .excludePathPatterns("/login","/logout","/css/**","/*.ico","/error","/login/loginForm","/noAuth","/vendor/**","/scss/**","/img/**","/js/**");
+
+//        registry.addInterceptor(new UserAuthInterceptor())
+//                .order(2)
+//                .addPathPatterns("/**")
+//                .excludePathPatterns("/login","/logout","/css/**","/*.ico","/error","/login/loginForm","","/noAuth","/vendor/**","/scss/**","/img/**","/js/**");
 
         registry.addInterceptor(new PermissionInterceptor())
                 .order(3)

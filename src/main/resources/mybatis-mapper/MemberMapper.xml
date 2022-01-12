@@ -19,11 +19,11 @@
 
     <select id="findUserByEmail" resultType="Member" parameterType="String">
         SELECT
-            user_email AS id,
-            user_role AS roleId,
+            user_email AS loginId,
+            user_role AS role,
             user_name AS name
         FROM auth_user
-            AND a.user_email = #{email}
+            WHERE user_email = #{email}
     </select>
 
 </mapper>

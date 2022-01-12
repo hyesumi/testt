@@ -9,7 +9,7 @@
             <div class="container-fluid">
                 <h1 class="h3 mb-2 text-gray-800">사용자 조회</h1>
 
-                <button class="w-25 btn btn-primary btn-sm" th:attr="onclick=|register()|" type="button">등록</button>
+                <button id="register" class="w-25 btn btn-primary btn-sm" th:attr="onclick=|register()|" type="button">등록</button>
 
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
@@ -30,14 +30,11 @@
                                 </thead>
                                 <tbody>
                                 <tr th:each="list : ${memberList}">
-<!--                                    <td><span th:text="${totalSize}-${totalSize}"></span></td>-->
-                                    <td><span><a th:text="${list.loginId}" href="" th:attr="onclick=|userDetail()|"></a></span></td>
-<!--                                    <td><span><a th:text="${list.loginId}" href="" th:attr="onclick=|userDetail('${list.loginId}')|"></a></span></td>-->
+                                    <td><a th:text="${list.loginId}" th:attr="onclick=|userAuthDetail('${list.loginId}')|" type="button"></a></td>
                                     <td><span th:text="${list.loginId}"></span></td>
                                     <td><span th:text="${list.name}"></span></td>
                                     <td><span th:text="${list.role}"></span></td>
                                     <td><span th:text="${list.createdDt}"></span></td>
-                                    <td><button class="btn btn-primary btn-sm" th:if="${session.LoginMembers.role}=='Super Admin'">변경</button></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -92,9 +89,9 @@
                                 <td>
                                     <div class="col-sm-9">
                                         <select class="form-control" value="" name="roleId" id="roleId" style="width:150px;">
-                                            <option value="S">Super Admin</option>
-                                            <option value="N">Admin</option>
-                                            <option value="U" selected>User</option>
+                                            <option value="SUPER_ADMIN">Super Admin</option>
+                                            <option value="ADMIN">Admin</option>
+                                            <option value="USER" selected>User</option>
                                         </select>
                                     </div>
                                 </td>
@@ -102,7 +99,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <span>패스워드는 초기 패스워드로 생성됩니다.</span>
+                    <span id="message">패스워드는 초기 패스워드로 생성됩니다.</span>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
@@ -112,97 +109,249 @@
         </div>
     </div>
 
-    <script th:inline="javascript">
+    <script type="text/javascript">
+        // var search = {};
+        // let editType = "${editType}";
+        // var userRoleId = "";
 
-        function userDetail() {
-            alert("test");
-        }
 
-        function register() {
-            $("#myModal").modal('show');
-        }
+        function userAuthDetail(email) {
+            var sessionUserAuth = "[[${session.LoginMembers.role}]]";
+            editType = "update";
 
-        window.addEventListener("DOMContentLoaded", function(event) {
-            let visiblePages = 10;
-            var totalSize = "[[${totalSize}]]";
-            let perpage = "[[${perPage}]]";
-            let totalPages = (totalSize/perpage);
-            if(totalSize % perpage > 0 || totalPages == 0){
-                totalPages = totalPages + 1;
-            }
-
-            // Paging Option
-            let defaultOps = {
-                totalPages: totalPages,
-                visiblePages: visiblePages,
-                startPage : 1,
-                first: "<<", last : ">>",
-                prev : "<", next : ">",
-                initiateStartPageClick: false,
-                onPageClick: function (event, page) {
-                    console.info(page + ' (from options)');
-                }
-            }
-
-            // Paging Callback Func
-            let pagingCallback = function (event, page) {
-                console.info(page + ' (from event listening)');
-                search.currentPage = page;
-
-            }
-
-            window.defaultOps = defaultOps;
-            window.pagingCallback = pagingCallback;
-            window.totalSize = totalSize;
-            $('#pagination').twbsPagination(defaultOps).on('page', pagingCallback);
-
-        });
-
-        //확인 클릭시
-        $("#btnSubmit").click(function() {
-            var auth = $('#roleId').val();
-
-            if (auth == null || auth == '') {
-                alert('권한을 선택해주세요');
-                return false;
-            }
-            if($('#name').val() == null || $('#name').val() == '') {
-                alert('이름을 입력해주세요');
-                return false;
-            }
-            if($('#id').val() == null || $('#id').val() == '') {
-                alert('아이디를 입력해주세요');
-                return false;
-            }
-
-            submitStart();
-        });
-
-        function submitStart() {
-            var data = {
-                auth : $('#authentication').val(),
-                name : $('#name').val(),
-                loginId : $('#id').val()
-            };
+            $("h4.modal-title").text("권한 변경");
+            $("#roleId option").not(":selected").attr("disabled", false);
+            $("#name").prop("readonly", true);
+            $("#id").prop("readonly", true);
+            $("#roleId").attr("disabled", false);
+            $("#message").hide();
 
             $.ajax({
                 type: "POST",
                 contentType: "application/json",
-                url: "/member/reg",
-                data: JSON.stringify(data),
-                dataType: 'json',
-                async : true,
+                url: "/member/detail" + "?email=" + email,
                 success: function (data) {
-                    if (data.message=="SUCCESS") {
-                        alert("등록되었습니다.");
-                        location.reload();
+                    alert(sessionUserAuth);
+                    if (sessionUserAuth != "SUPER_ADMIN") {
+                        $("#btnSubmit").css("display", "none");
                     } else {
-                        alert("등록에 실패하였습니다.\n 관리자에게 문의해주세요.");
+                        $("#btnSubmit").css("display", "inline-block");
                     }
+                    // userRoleId = data.roleId;
+                    userRoleId = data.role;
+                    $("#name").val(data.name);
+                    $("#id").val(data.loginId);
+                    $("#roleId").val(data.role);
+                    // previousRoleId = data.roleId;
+                    previousRoleId = data.role;
                 }, error: function (e) {
                     console.log(e);
                 }
             });
+
+            $("#myModal").modal('show');
+        }
+
+        window.onload = function() {
+            var sessionId = "[[${session.LoginMembers.loginId}]]";
+
+
+        //     $('div.right_col').on('mousedown', function(e) {
+        //         e.preventDefault();
+        //     });
+        //
+        //     var param = {};
+        //     param.userEmail = asciiToChar("${userEmail}");
+        //
+        //     var visiblePages = 10;
+        //     var totalSize = "${totalSize?if_exists}";
+        //     var perpage =  "${perPage?if_exists}";
+        //     var totalPages = (totalSize / perpage);
+        //
+        //     if (totalSize % perpage > 0 || totalPages == 0) {
+        //         totalPages = totalPages + 1;
+        //     }
+        //
+        //     $.ajax({
+        //         type: "POST",
+        //         contentType: "application/json",
+        //         url: "<@c.url value='/auth/role.do'/>",
+        //         data: JSON.stringify(param),
+        //         dataType: 'json',
+        //         cache: false,
+        //         timeout: 600000,
+        //         success: function (data) {
+        //             console.log(data.userRole);
+        //
+        //             if (!data.userRole.includes("ADMIN")) {
+        //                 $("#adminBtnGroup").css("display" , "none");
+        //             }
+        //         }, error: function (e) {
+        //             console.dir(e);
+        //         }, complete:function() {
+        //
+        //         }
+        //     });
+        //     // Handlebar Counter
+        //
+        //     Handlebars.registerHelper('position', function() {
+        //         return window.positionCounter--;
+        //     });
+        //
+        //     // Paging Option
+        //     var defaultOps = {
+        //         totalPages: totalPages,
+        //         visiblePages: visiblePages,
+        //         startPage : 1,
+        //         first: "<<", last : ">>",
+        //         prev : "<", next : ">",
+        //         initiateStartPageClick: false,
+        //         onPageClick: function (event, page) {
+        //             console.info(page + ' (from options)');
+        //         }
+        //     };
+        //
+        //     // Paging Callback Func
+        //     var pagingCallback = function (event, page) {
+        //         console.info(page + ' (from event listening)');
+        //         search.currentPage = page;
+        //         fire_ajax_submit(search);
+        //     };
+        //
+        //     window.defaultOps = defaultOps;
+        //     window.pagingCallback = pagingCallback;
+        //     window.totalSize = totalSize;
+        //     $('#pagination').twbsPagination(defaultOps).on('page', pagingCallback);
+        //
+        //     $("#btnAdd").click(function() {
+        //         editType = "add";
+        //         $("h4.modal-title").text('회원 등록');
+        //         $("#roleId").val("17");
+        //         $("#name").val("");
+        //         $("#email").val("");
+        //         $("#phone").val("");
+        //         $("#roleId option").not(":selected").attr("disabled", "disabled");
+        //         $("#name").prop("readonly", false);
+        //         $("#email").prop("readonly", false);
+        //         $("#phone").prop("readonly", false);
+        //         previousRoleId = null;
+        //
+        //         $("#modal").modal('show');
+        //     });
+        //
+        //     $("#del_btn").click(function() {
+        //         editType = 'delete';
+        //         let idxArray = new Array();
+        //
+        //         $("#dataList tr").find("input[type=checkbox]:checked").each(function () {
+        //             idxArray.push(this.value);
+        //         });
+        //
+        //         if (idxArray.length > 0) {
+        //             $.ajax({
+        //                 type: "POST",
+        //                 contentType: "application/json",
+        //                 url: "<@c.url value='/inside/auth/delete'/>",
+        //                 data: JSON.stringify({idxArray : idxArray,
+        //                     registerId : asciiToChar(userEmail)}),
+        //                 dataType: 'json',
+        //                 async : true,
+        //                 success: function (data) {
+        //                     if(data.code=="0000"){
+        //                         alert("삭제되었습니다.");
+        //                         location.reload();
+        //                     }else{
+        //                         alert("삭제에 실패하였습니다.\n 관리자에게 문의해주세요.");
+        //                     }
+        //                 }, error: function (e) {
+        //                     console.log(e);
+        //                 }
+        //             });
+        //         }
+        //     });
+        //
+        //     //확인 클릭시
+        //     $("#btnSubmit").click(function() {
+        //         var roleId = $('#roleId').val();
+        //
+        //         if (roleId == null || roleId == '') {
+        //             alert('권한을 선택해주세요');
+        //             return false;
+        //         }
+        //         if($('#name').val() == null || $('#name').val() == '') {
+        //             alert('이름을 입력해주세요');
+        //             return false;
+        //         }
+        //         if($('#email').val() == null || $('#email').val() == '') {
+        //             alert('Email 을 입력해주세요');
+        //             return false;
+        //         }
+        //         if($('#phone').val() == null || $('#email').val() == '') {
+        //             alert('핸드폰번호를 입력해주세요');
+        //             return false;
+        //         }
+        //
+        //         var emailVal = $("#email").val();
+        //         var phoneVal = $("#phone").val();
+        //         var regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+        //
+        //         if (emailVal.length < 3) {
+        //             alert("Email 은 3글자 이상 입력해야 합니다.");
+        //             return false;
+        //         } else {
+        //             if (emailVal.match(regExp) == null) {
+        //                 alert("올바른 Email 형식이 아닙니다. 다시 입력해주세요.");
+        //                 return false;
+        //             }
+        //         }
+        //
+        //         if(editType != "update"){
+        //             regExp = /^01([0|1|6|7|8|9]?)?([0-9]{3,4})?([0-9]{4})$/;
+        //
+        //             if (phoneVal.match(regExp) == null) {
+        //                 alert("올바른 핸드폰번호 형식이 아닙니다. 다시 입력해주세요.");
+        //                 return false;
+        //             }
+        //         }
+        //
+        //         if(roleId != userRoleId){
+        //             submitStart();
+        //         } else {
+        //             $("#modal").modal('hide');
+        //         }
+        //
+        //     });
+        //
+        //     function submitStart() {
+        //         var data = {
+        //             roleId : $('#roleId').val(),
+        //             email : $('#email').val(),
+        //             name : $('#name').val(),
+        //             phoneNo : $('#phone').val(),
+        //             registerId : asciiToChar(userEmail),
+        //             previousRoleId : previousRoleId,
+        //             editType : editType
+        //         };
+        //
+        //         $.ajax({
+        //             type: "POST",
+        //             contentType: "application/json",
+        //             url: "<@c.url value='/inside/auth/edit'/>",
+        //             data: JSON.stringify(data),
+        //             dataType: 'json',
+        //             async : true,
+        //             success: function (data) {
+        //                 if (data.code=="0000") {
+        //                     alert("등록되었습니다.");
+        //                     location.reload();
+        //                 } else {
+        //                     alert("등록에 실패하였습니다.\n 관리자에게 문의해주세요.");
+        //                 }
+        //             }, error: function (e) {
+        //                 console.log(e);
+        //             }
+        //         });
+        //     }
         }
     </script>
 

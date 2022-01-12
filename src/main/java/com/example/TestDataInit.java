@@ -22,12 +22,13 @@ public class TestDataInit {
         member.setLoginId("test");
         member.setPassword("test!");
         member.setName("테스터");
-        member.setRole("Super Admin");
+        member.setRole("SUPER_ADMIN");
 
         Member member2 = new Member();
         member2.setLoginId("test2");
         member2.setPassword("test!");
         member2.setName("테스터2");
+        member2.setRole("ADMIN");
 
         memberRepository.save(member);
         memberRepository.save(member2);

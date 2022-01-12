@@ -46,7 +46,7 @@ public class MemberController {
 
         List<Member> memberList = memberService.getMemberList();
         System.out.println(memberList);
-       model.addAttribute("memberList",memberList);
+        model.addAttribute("memberList",memberList);
         model.addAttribute("totalSize",memberList.size());
         model.addAttribute("perPage", pagingInfo.getPerPage());
 
@@ -65,6 +65,7 @@ public class MemberController {
     public ResponseEntity<Member>detailAuthManager(@RequestParam(required = false) String email) {
 
         Member member = memberService.findUserByEmail(email);
+        System.out.println(member.toString());
         return ResponseEntity.ok().body(member);
 
 
