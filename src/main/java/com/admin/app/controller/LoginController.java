@@ -87,7 +87,7 @@ public class LoginController {
         }
 
         //로그인 성공시 초기화 진행
-        loginService.updateLastLoginTime(loginMember.getUseYn());
+        loginService.updateLastLoginTime(loginMember.getLoginId());
 
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
