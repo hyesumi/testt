@@ -19,13 +19,17 @@ public class LoginDBService {
         this.loginMapper = loginMapper;
     }
 
-    public Member login(String loginId, String password){
-        System.out.println("ID="+loginId);
+    public Member login(String loginId){
+        return loginMapper.findByLoginId(loginId);
+    }
+
+    public Member checkPassword(String loginId, String password){
         Member member = loginMapper.findByLoginId(loginId);
         Optional<Member> checkMember = Optional.ofNullable(member);
         return checkMember.filter(m -> m.getPassword().equals(password))
                 .orElse(null);
     }
+
 
     public int checkLoginCount(String loginId){
         return loginMapper.checkLoginCount(loginId);

@@ -48,13 +48,21 @@ public class LoginController {
         System.out.println("아이디="+form.getLoginId()+"비밀번호="+form.getPassword());
 //        Member loginMember = loginService.login(form.getLoginId(),form.getPassword());
 
-        Member loginMember = loginService.login(form.getLoginId(),form.getPassword());
+        Member loginMember = loginService.login(form.getLoginId());
+
+        //아이디 정보가 없는 경우
+        if(loginMember == null){
+            bindingResult.reject("loginFail","등록되지 않은 아이디입니다.");
+            return "login/loginForm";
+        }
+
+        loginMember = loginService.checkPassword(form.getLoginId(), form.getPassword());
 
         if(loginMember == null){
             //로그인 실패시 로그인 횟수 확인
             int logincnt = loginService.checkLoginCount(form.getLoginId());
 
-            //5회인경우 잠금처리
+            //5회 실패시 경우 잠금처리
             if(logincnt == 5){
                 bindingResult.reject("loginFail","5회이상 로그인 실패로 인해 해당 계정은 잠금처리되었습니다.");
                 return "login/loginForm";
