@@ -13,5 +13,7 @@ public interface MemberMapper {
 
     Member findUserByEmail(String email) throws DataAccessException;
 
+    void updateAuthAdminList(Member member) throws DataAccessException;
 
+    int insertAuthAdminList(Member member) throws DataAccessException;
 }

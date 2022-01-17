@@ -23,13 +23,11 @@
                                     <th>이름</th>
                                     <th>권한</th>
                                     <th>생성일</th>
-                                    <th>변경</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:each="list : ${memberList}">
                                     <td><a th:text="${list.loginId}" th:attr="onclick=|userAuthDetail('${list.loginId}')|" type="button"></a></td>
-                                    <td><span th:text="${list.loginId}"></span></td>
                                     <td><span th:text="${list.name}"></span></td>
                                     <td><span th:text="${list.role}"></span></td>
                                     <td><span th:text="${list.createdDt}"></span></td>
@@ -119,7 +117,6 @@
         // let editType = "${editType}";
         var userRoleId = "";
 
-
         function userAuthDetail(email) {
             var sessionUserAuth = "[[${session.LoginMembers.role}]]";
             editType = "update";
@@ -136,19 +133,18 @@
                 contentType: "application/json",
                 url: "/member/detail" + "?email=" + email,
                 success: function (data) {
-                    alert(sessionUserAuth);
                     if (sessionUserAuth != "SUPER_ADMIN") {
                         $("#btnSubmit").css("display", "none");
                     } else {
                         $("#btnSubmit").css("display", "inline-block");
                     }
                     // userRoleId = data.roleId;
-                    userRoleId = data.role;
+                    //userRoleId = data.role;
                     $("#name").val(data.name);
                     $("#id").val(data.loginId);
                     $("#roleId").val(data.role);
                     // previousRoleId = data.roleId;
-                    previousRoleId = data.role;
+                    //previousRoleId = data.role;
                 }, error: function (e) {
                     console.log(e);
                 }
@@ -236,7 +232,7 @@
                 $("#roleId option").not(":selected").attr("disabled", "disabled");
                 $("#name").prop("readonly", false);
                 $("#id").prop("readonly", false);
-                previousRoleId = null;
+                //previousRoleId = null;
 
                 $("#myModal").modal('show');
             });
@@ -316,18 +312,20 @@
                 //     }
                 // }
 
-                if(roleId != userRoleId){
-                    submitStart();
-                } else {
-                    $("#modal").modal('hide');
-                }
+                // if(roleId != userRoleId){
+                //     submitStart();
+                // } else {
+                //     $("#modal").modal('hide');
+                // }
+
+                submitStart();
 
             });
 
             function submitStart() {
                 var data = {
-                    roleId : $('#roleId').val(),
-                    email : $('#id').val(),
+                    role : $('#roleId').val(),
+                    loginId : $('#id').val(),
                     name : $('#name').val(),
                     // phoneNo : $('#phone').val(),
                     // registerId : asciiToChar(userEmail),

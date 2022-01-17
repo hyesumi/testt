@@ -11,9 +11,9 @@
             user_email AS loginId,
             user_name AS name,
             user_role AS role,
-            created_dt AS createdDt
+            created_dt AS createdDt,
+            use_yn AS useYn
         FROM auth_user
-        WHERE use_yn = 'Y'
     </select>
 
 
@@ -35,5 +35,37 @@
         FROM auth_user
         WHERE user_email = #{email}
     </select>
+
+    <update id="updateAuthAdminList" parameterType="Member">
+        UPDATE
+            auth_user
+            SET user_role = #{role}
+        WHERE user_email = #{loginId}
+    </update>
+
+    <insert id="insertAuthAdminList" parameterType="Member">
+        INSERT INTO auth_user
+        (
+        user_pw,
+        user_email,
+        user_name,
+        created_dt,
+        updated_dt,
+        use_yn,
+        user_role
+        )
+        VALUES
+        (
+        #{password},
+        #{loginId},
+        #{name},
+        now(),
+        now(),
+        'Y',
+        #{role}
+        )
+
+    </insert>
+
 
 </mapper>

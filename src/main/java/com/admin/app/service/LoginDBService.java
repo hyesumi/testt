@@ -7,11 +7,11 @@ import com.admin.app.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 @Service
 public class LoginDBService {
-
-    //private final MemberRepository memberRepository;
 
     LoginMapper loginMapper;
 
@@ -22,10 +22,24 @@ public class LoginDBService {
     public Member login(String loginId, String password){
         System.out.println("ID="+loginId);
         Member member = loginMapper.findByLoginId(loginId);
-//       return memberMapper.findByLoginId(loginId)
-//                .filter(m -> m.getPassword().equals(password))
-//                .orElse(null);
-        return member;
+        Optional<Member> checkMember = Optional.ofNullable(member);
+        return checkMember.filter(m -> m.getPassword().equals(password))
+                .orElse(null);
     }
 
+    public int checkLoginCount(String loginId){
+        return loginMapper.checkLoginCount(loginId);
+    }
+
+    public void increaseLoginCount(String loginId){
+        loginMapper.increaseLoginCount(loginId);
+    }
+
+    public void lockAuthUser(String loginId){
+        loginMapper.lockAuthUser(loginId);
+    }
+
+    public void updateLastLoginTime(String username){
+        loginMapper.updateLastLoginTime(username);
+    }
 }

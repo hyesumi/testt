@@ -10,9 +10,38 @@
             user_email AS loginId,
             user_role AS role,
             user_name AS name,
-            user_pw AS password
+            user_pw AS password,
+            use_yn AS useYn
         FROM auth_user
         WHERE user_email = #{email}
     </select>
+
+    <update id="increaseLoginCount" parameterType="Member" >
+        UPDATE
+            auth_user
+        SET logincnt = logincnt + 1
+        WHERE user_email = #{loginId}
+    </update>
+
+    <select id="checkLoginCount" parameterType="String" resultType="int">
+        SELECT
+            logincnt
+        FROM auth_user
+        WHERE user_email = #{loginId}
+    </select>
+
+    <update id="updateLastLoginTime" parameterType="String">
+        UPDATE
+            auth_user
+        SET last_login_dt = now(), logincnt = 0
+        WHERE user_email = #{loginId}
+    </update>
+
+    <update id="lockAuthUser" parameterType="String">
+        UPDATE
+            auth_user
+        SET use_yn = 'N'
+        WHERE user_email =#{loginId}
+    </update>
 
 </mapper>

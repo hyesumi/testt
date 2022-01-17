@@ -22,4 +22,12 @@ public class MemberService {
     public Member findUserByEmail(String email){
         return memberMapper.findUserByEmail(email);
     }
+
+    public void updateAuthAdminList(Member member){
+        memberMapper.updateAuthAdminList(member);
+    }
+
+    public int insertAuthAdminList(Member uxUser){
+        return memberMapper.insertAuthAdminList(uxUser);
+    }
 }

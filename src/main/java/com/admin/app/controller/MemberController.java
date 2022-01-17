@@ -24,11 +24,10 @@ import java.util.List;
 public class MemberController {
 
     private MemberService memberService;
-    @Autowired
+
     public MemberController(MemberService memberService) {
         this.memberService = memberService;
     }
-
 
     @RequestMapping("/list")
     public String memberList(Model model, HttpServletRequest request) {
@@ -76,9 +75,14 @@ public class MemberController {
         try{
             if (member.getEditType().equals("add")) {
                 System.out.println("사용자 추가");
+                member.setPassword("1234");
+                memberService.insertAuthAdminList(member);
                 map.put("message", "SUCCESS");
             } else if (member.getEditType().equals("update")) {
-
+                System.out.println("사용자 수정");
+                System.out.println(member.getLoginId());
+                memberService.updateAuthAdminList(member);
+                map.put("message", "SUCCESS");
             }
 
         }catch(Exception e){
