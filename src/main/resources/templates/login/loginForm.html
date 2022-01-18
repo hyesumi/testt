@@ -17,7 +17,7 @@
 
 <div class="container">
     <div class="py-5 text-center">
-        <h2>로그인</h2> </div>
+        <h2>로카모빌리티 Admin 로그인</h2> </div>
     <form action="top.html" th:action th:object="${loginForm}" method="post">
         <div th:if="${#fields.hasGlobalErrors()}">
             <p class="field-error" th:each="err : ${#fields.globalErrors()}"
@@ -52,6 +52,10 @@
             </div>
         </div>
     </form>
+    <ul>
+        <li>이 시스템은 로카 Admin 관리 시스템입니다.</li>
+        <li>관리자 등록 및 ID/PW 찾기는 책임관리자에게 문의하세요</li>
+    </ul>
 
 </div> <!-- /container -->
 </body>

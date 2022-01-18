@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Mapper
@@ -16,4 +17,6 @@ public interface MemberMapper {
     void updateAuthAdminList(Member member) throws DataAccessException;
 
     int insertAuthAdminList(Member member) throws DataAccessException;
+
+    void deleteAuthUser(Map<String,Object> idxArray) throws DataAccessException;
 }

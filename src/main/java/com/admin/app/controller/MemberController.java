@@ -5,7 +5,9 @@ import com.admin.app.dto.Member;
 import com.admin.app.dto.PagingInfo;
 import com.admin.app.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -75,7 +79,7 @@ public class MemberController {
         try{
             if (member.getEditType().equals("add")) {
                 System.out.println("사용자 추가");
-                member.setPassword("1234");
+                member.setPassword(BCrypt.hashpw("asdf1234@@!!",BCrypt.gensalt(10)));
                 memberService.insertAuthAdminList(member);
                 map.put("message", "SUCCESS");
             } else if (member.getEditType().equals("update")) {
@@ -89,7 +93,7 @@ public class MemberController {
 
         }
 
-        return  ResponseEntity.ok().body(map);
+        return ResponseEntity.ok().body(map);
 
 //        try {
 //            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
@@ -124,5 +128,21 @@ public class MemberController {
 //        }
 //
 //        return ResponseEntity.ok().body(new UxResponse(DefResponse.SUCCESS));
+    }
+
+    @RequestMapping(value="/delete", method=RequestMethod.POST)
+    public ResponseEntity<HashMap<String,Object>> deleteAuthAdminList(HttpServletRequest request, @RequestBody Map<String,Object> idxArray) {
+        HashMap<String,Object> map = new HashMap<>();
+        try {
+            System.out.println(idxArray.entrySet());
+            memberService.deleteAuthUser(idxArray);
+            map.put("message", "SUCCESS");
+
+        } catch (DataAccessException e) {
+            map.put("message", "FAIL");
+            return  ResponseEntity.ok().body(map);
+        }
+
+        return  ResponseEntity.ok().body(map);
     }
 }

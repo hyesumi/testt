@@ -7,6 +7,7 @@ import com.admin.app.service.LoginDBService;
 import com.admin.app.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
@@ -54,9 +55,13 @@ public class LoginController {
         if(loginMember == null){
             bindingResult.reject("loginFail","등록되지 않은 아이디입니다.");
             return "login/loginForm";
+        } else{
+            if(!BCrypt.checkpw(form.getPassword(), loginMember.getPassword())){
+                loginMember = null;
+            }
         }
 
-        loginMember = loginService.checkPassword(form.getLoginId(), form.getPassword());
+        //loginMember = loginService.checkPassword(form.getLoginId(), form.getPassword());
 
         if(loginMember == null){
             //로그인 실패시 로그인 횟수 확인
@@ -65,7 +70,6 @@ public class LoginController {
             //5회 실패시 경우 잠금처리
             if(logincnt == 5){
                 bindingResult.reject("loginFail","5회이상 로그인 실패로 인해 해당 계정은 잠금처리되었습니다.");
-                return "login/loginForm";
             } else {
                 //로그인 실패시 횟수 증가
                 logincnt++;
@@ -74,7 +78,6 @@ public class LoginController {
                 if(logincnt == 5){
                     //계정 잠금처리
                     loginService.lockAuthUser(form.getLoginId());
-                    return "login/loginForm";
                 }
             }
             return "login/loginForm";

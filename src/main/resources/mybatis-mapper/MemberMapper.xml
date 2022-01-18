@@ -67,5 +67,12 @@
 
     </insert>
 
-
+    <delete id="deleteAuthUser" parameterType="java.util.Map">
+        DELETE
+        FROM auth_user
+        WHERE user_id IN
+        <foreach collection="idxArray" item="item" index="index" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </delete>
 </mapper>

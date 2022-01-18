@@ -5,6 +5,7 @@ import com.admin.app.mapper.MemberMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -29,5 +30,9 @@ public class MemberService {
 
     public int insertAuthAdminList(Member uxUser){
         return memberMapper.insertAuthAdminList(uxUser);
+    }
+
+    public void deleteAuthUser(Map<String,Object> idxArray){
+        memberMapper.deleteAuthUser(idxArray);
     }
 }

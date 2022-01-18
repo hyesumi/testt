@@ -19,14 +19,16 @@
                             <table class="table table-bordered" id="dataTable" width="70%" cellspacing="0">
                                 <thead>
                                 <tr>
+                                    <th></th>
                                     <th>아이디</th>
                                     <th>이름</th>
                                     <th>권한</th>
                                     <th>생성일</th>
                                 </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="dataList">
                                 <tr th:each="list : ${memberList}">
+                                    <td><input type="checkbox" th:value="${list.id}" ></td>
                                     <td><a th:text="${list.loginId}" th:attr="onclick=|userAuthDetail('${list.loginId}')|" type="button"></a></td>
                                     <td><span th:text="${list.name}"></span></td>
                                     <td><span th:text="${list.role}"></span></td>
@@ -156,6 +158,10 @@
         window.onload = function() {
             var sessionUserAuth = "[[${session.LoginMembers.role}]]";
 
+            if (!sessionUserAuth.includes("ADMIN")) {
+                $("#adminBtnGroup").css("display" , "none");
+            }
+
         //     $('div.right_col').on('mousedown', function(e) {
         //         e.preventDefault();
         //     });
@@ -172,26 +178,6 @@
         //         totalPages = totalPages + 1;
         //     }
         //
-        //     $.ajax({
-        //         type: "POST",
-        //         contentType: "application/json",
-        //         url: "<@c.url value='/auth/role.do'/>",
-        //         data: JSON.stringify(param),
-        //         dataType: 'json',
-        //         cache: false,
-        //         timeout: 600000,
-        //         success: function (data) {
-        //             console.log(data.userRole);
-        //
-        //             if (!data.userRole.includes("ADMIN")) {
-        //                 $("#adminBtnGroup").css("display" , "none");
-        //             }
-        //         }, error: function (e) {
-        //             console.dir(e);
-        //         }, complete:function() {
-        //
-        //         }
-        //     });
         //     // Handlebar Counter
         //
         //     Handlebars.registerHelper('position', function() {
@@ -236,38 +222,37 @@
 
                 $("#myModal").modal('show');
             });
-        //
-        //     $("#del_btn").click(function() {
-        //         editType = 'delete';
-        //         let idxArray = new Array();
-        //
-        //         $("#dataList tr").find("input[type=checkbox]:checked").each(function () {
-        //             idxArray.push(this.value);
-        //         });
-        //
-        //         if (idxArray.length > 0) {
-        //             $.ajax({
-        //                 type: "POST",
-        //                 contentType: "application/json",
-        //                 url: "<@c.url value='/inside/auth/delete'/>",
-        //                 data: JSON.stringify({idxArray : idxArray,
-        //                     registerId : asciiToChar(userEmail)}),
-        //                 dataType: 'json',
-        //                 async : true,
-        //                 success: function (data) {
-        //                     if(data.code=="0000"){
-        //                         alert("삭제되었습니다.");
-        //                         location.reload();
-        //                     }else{
-        //                         alert("삭제에 실패하였습니다.\n 관리자에게 문의해주세요.");
-        //                     }
-        //                 }, error: function (e) {
-        //                     console.log(e);
-        //                 }
-        //             });
-        //         }
-        //     });
-        //
+
+            $("#del_btn").click(function() {
+                editType = 'delete';
+                let idxArray = new Array();
+
+                $("#dataList tr").find("input[type=checkbox]:checked").each(function () {
+                    idxArray.push(this.value);
+                });
+
+                if (idxArray.length > 0) {
+                    $.ajax({
+                        type: "POST",
+                        contentType: "application/json",
+                        url: "/member/delete",
+                        data: JSON.stringify({idxArray : idxArray}),
+                        dataType: 'json',
+                        async : true,
+                        success: function (data) {
+                            if (data.message=="SUCCESS") {
+                                alert("삭제되었습니다.");
+                                location.reload();
+                            }else{
+                                alert("삭제에 실패하였습니다.\n 관리자에게 문의해주세요.");
+                            }
+                        }, error: function (e) {
+                            console.log(e);
+                        }
+                    });
+                }
+            });
+
              //확인 클릭시
             $("#btnSubmit").click(function() {
                 var roleId = $('#roleId').val();
