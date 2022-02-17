@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.admin.app.mapper.AdminCodeMapper">
+
+    <select id="getAdminCodeList" parameterType="AdminCode" resultType="AdminCode">
+        SELECT
+        idx AS id,
+        depth_1_nm AS depth1,
+        depth_2_nm AS depth2,
+        admcode,
+        fare_type_1 AS fareType1,
+        fare_type_2 AS fareType2,
+        fare_type_w AS fareTypeW,
+        fare_type_etc AS fareTypeEtc
+        FROM kstm_area_tb
+        WHERE 1=1
+        <if test="depth1 != null and depth1 != ''">
+            and depth_1_nm like CONCAT('%', #{depth1}, '%')
+        </if>
+        <if test="depth2 != null and depth2 != ''">
+            and depth_2_nm like CONCAT('%', #{depth2}, '%')
+        </if>
+        <if test="admcode != null and admcode != ''">
+            and admcode = #{admcode}
+        </if>
+        limit ${perPage} OFFSET ${(currentPage-1)*perPage}
+    </select>
+
+    <select id="getAdminCode" parameterType="AdminCode" resultType="AdminCode">
+        SELECT
+        idx AS id,
+        depth_1_nm AS depth1,
+        depth_2_nm AS depth2,
+        admcode,
+        fare_type_1 AS fareType1,
+        fare_type_2 AS fareType2,
+        fare_type_w AS fareTypeW,
+        fare_type_etc AS fareTypeEtc
+        FROM kstm_area_tb
+        WHERE 1=1
+    </select>
+
+    <select id="getFareList" resultType="AdminCode" >
+        SELECT fare_type AS fareTypeNm FROM taxi_fare_tb
+    </select>
+
+    <select id="adminCodeTotalCnt" parameterType="AdminCode" resultType="int">
+        SELECT
+           count(1)
+        FROM kstm_area_tb
+        WHERE 1=1
+        <if test="depth1 != null and depth1 != ''">
+            and depth_1_nm like CONCAT('%', #{depth1}, '%')
+        </if>
+        <if test="admcode != null and admcode != ''">
+            and admcode = #{admcode}
+        </if>
+    </select>
+
+    <select id="findAdminCodeByIdx" resultType="AdminCode" parameterType="String">
+        SELECT
+            idx AS id,
+            depth_1_nm AS depth1,
+            depth_2_nm AS depth2,
+            admcode,
+            fare_type_1 AS fareType1,
+            fare_type_2 AS fareType2,
+            fare_type_w AS fareTypeW,
+            fare_type_etc AS fareTypeEtc
+        FROM kstm_area_tb
+            WHERE idx = #{id}
+    </select>
+
+    <select id="findDetailCode" resultType="String" parameterType="String">
+        SELECT
+            admcode
+        FROM kstm_area_tb
+        WHERE depth_1_nm like CONCAT('%', #{sidoContent}, '%')
+        <if test="gugunContent != null and gugunContent != ''">
+            and depth_2_nm like CONCAT('%', #{gugunContent}, '%')
+        </if>
+
+    </select>
+
+    <select id="findTaxiType" resultType="String" parameterType="String">
+        SELECT
+            fare_type
+        FROM taxi_fare_tb
+        WHERE 1=1
+        <if test="taxiType == 'type1'">
+            AND taxi_fare_nm like CONCAT('%', #{areaName}, '%') and taxi_fare_nm like CONCAT('%중형%')
+        </if>
+        <if test="taxiType == 'type2'">
+            AND taxi_fare_nm like CONCAT('%', #{areaName}, '%') and taxi_fare_nm like CONCAT('%대형%')
+        </if>
+        <if test="taxiType == 'typeW'">
+            AND taxi_fare_nm like CONCAT('%', #{areaName}, '%') and taxi_fare_nm like CONCAT('%약자%')
+        </if>
+    </select>
+
+    <insert id="insertAdminCode" parameterType="AdminCode">
+        INSERT INTO kstm_area_tb
+        (
+            depth_1_nm,
+            depth_2_nm,
+            admcode,
+            fare_type_1,
+            fare_type_2,
+            fare_type_w,
+            fare_type_etc
+        )
+        VALUES
+            (
+                #{depth1},
+                #{depth2},
+                #{admcode},
+                #{fareType1},
+                #{fareType2},
+                #{fareTypeW},
+                #{fareTypeEtc}
+            )
+    </insert>
+
+    <update id="updateAdminCode" parameterType="AdminCode">
+        UPDATE
+            kstm_area_tb
+        SET depth_1_nm = #{depth1},depth_2_nm = #{depth2},admcode = #{admcode},fare_type_1 = #{fareType1},fare_type_2 = #{fareType2},fare_type_w = #{fareTypeW},fare_type_etc = #{fareTypeEtc}
+        WHERE idx = #{id}
+    </update>
+</mapper>

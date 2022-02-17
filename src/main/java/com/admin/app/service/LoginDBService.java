@@ -1,10 +1,7 @@
 package com.admin.app.service;
 
 import com.admin.app.dto.Member;
-import com.admin.app.dto.MemberRepository;
 import com.admin.app.mapper.LoginMapper;
-import com.admin.app.mapper.MemberMapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

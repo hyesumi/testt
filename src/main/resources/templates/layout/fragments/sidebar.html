@@ -41,7 +41,7 @@
             </a>
             <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                 <ul>
-                    <li><a class="collapse-item" href="buttons.html" th:href="@{/member/list}">사용자 조회</a></li>
+                    <li><a class="collapse-item" name="member/list" th:href="@{/member/list}">사용자 조회</a></li>
                 </ul>
             </div>
         </li>
@@ -56,11 +56,10 @@
             <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
                  data-parent="#accordionSidebar">
                 <ul>
-                    <li><a class="collapse-item" href="buttons.html" th:href="@{/member/list}">요금 관리</a></li>
-                    <li><a class="collapse-item" href="buttons.html" th:href="@{/member/list}">영업 행정 지역 관리</a></li>
-                    <li><a class="collapse-item" href="buttons.html" th:href="@{/member/list}">요금 정보 관리</a></li>
-                    <li><a class="collapse-item" href="buttons.html" th:href="@{/member/list}">공동사업지구 관리</a></li>
-                    <li><a class="collapse-item" href="buttons.html" th:href="@{/member/list}">예외 요금 관리</a></li>
+                    <li><a class="collapse-item" th:href="@{/admincode/list}">영업 행정 지역 관리</a></li>
+                    <li><a class="collapse-item" th:href="@{/fare/list}">요금 정보 관리</a></li>
+                    <li><a class="collapse-item" th:href="@{/common/list}">공동사업지구 관리</a></li>
+                    <li><a class="collapse-item" th:href="@{/exceptionfare/list}">예외 요금 관리</a></li>
                 </ul>
             </div>
         </li>
@@ -73,7 +72,7 @@
             </a>
             <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                 <ul>
-                    <li><a class="collapse-item" href="buttons.html" th:href="@{/member/list}">SDK 배포 관리</a></li>
+                    <li><a class="collapse-item" href="buttons.html" th:href="@{/templates/view/member/list}">SDK 배포 관리</a></li>
                 </ul>
             </div>
         </li>
@@ -90,7 +89,7 @@
             </a>
             <div id="collapsePages2" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                 <ul>
-                    <li><a class="collapse-item" href="buttons.html" th:href="@{/member/list}">실시간 통계</a></li>
+                    <li><a class="collapse-item" href="buttons.html" th:href="@{/templates/view/member/list}">실시간 통계</a></li>
                 </ul>
             </div>
         </li>

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div class="container-fluid">
+                <h1 class="h3 mb-2 text-gray-800">영업행정지역 관리</h1>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="x_panel">
+                            <div class="x_content">
+                                <table class="table table_custom">
+                                    <colgroup>
+                                        <col width="12%">
+                                        <col width="38%">
+                                        <col width="12%">
+                                        <col width="38%">
+                                    </colgroup>
+                                    <tbody>
+                                    <tr>
+                                        <th>지역명</th>
+                                        <td>
+                                            <input type="text" class="form-control" id="searchName" placeholder="">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>코드</th>
+                                        <td>
+                                            <input type="text" class="form-control" id="searchCode" placeholder="">
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="col-sm-12 button_group">
+                                    <div class="pull-right">
+                                        <button type="button" class="btn btn-primary" id="btnSearch" onclick="fnSearch()">검색</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="70%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>지역</th>
+                                    <th>상세지역</th>
+                                    <th>행정코드</th>
+                                    <th>중형택시</th>
+                                    <th>대형,모범택시</th>
+                                    <th>약자택시</th>
+                                    <th>기타</th>
+                                </tr>
+                                </thead>
+                                <tbody id="dataList">
+                                <tr th:each="list,num : ${adminCodeList}">
+                                    <td><input type="checkbox" th:value="${list.id}" ></td>
+                                    <td><a th:text="${list.depth1}" th:attr="onclick=|commonAreaDetail('${list.id}')|" type="button"></a></td>
+                                    <td><span th:text="${list.depth2}"></span></td>
+                                    <td><span th:text="${list.admcode}"></span></td>
+                                    <td><span th:text="${list.fareType1}"></span></td>
+                                    <td><span th:text="${list.fareType2}"></span></td>
+                                    <td><span th:text="${list.fareTypeW}"></span></td>
+                                    <td><span th:text="${list.fareTypeEtc}"></span></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div class="col-sm-12">
+                                <div class="paging_simple_numbers" id="datatable-fixed-header_paginate">
+                                    <ul class="pagination" id="pagination"></ul>
+                                    <div class="pull-right">
+                                        <span id="adminBtnGroup">
+                                            <button type="button" class="btn btn-primary" id="btnAdd" data-target=".bs-example-modal-lg">등록</button>
+                                            <button type="button" class="btn btn-danger" id="del_btn">삭제</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">영업행정지역 등록</h4>
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body" id="modal_upload" >
+                        <table class="table table_custom" id="modal_table">
+                            <colgroup>
+                                <col width="20%">
+                                <col width="30%">
+                                <col width="20%">
+                                <col width="30%">
+                            </colgroup>
+                            <tbody id="modal_tbody">
+                            <input  type="hidden" id="id" value="0">
+                            <tr>
+                                <th><span class="required"></span>지역</th>
+                                <td colspan="3">
+                                    <div class="col-sm-9">
+                                        <select name="" id="address" onchange="categoryChange(this)">
+                                            <option value selected>시/도 선택</option>
+                                            <option value="강원">강원</option>
+                                            <option value="경기">경기</option>
+                                            <option value="경남">경남</option>
+                                            <option value="경북">경북</option>
+                                            <option value="광주">광주</option>
+                                            <option value="대구">대구</option>
+                                            <option value="대전">대전</option>
+                                            <option value="부산">부산</option>
+                                            <option value="서울">서울</option>
+                                            <option value="울산">울산</option>
+                                            <option value="인천">인천</option>
+                                            <option value="전남">전남</option>
+                                            <option value="전북">전북</option>
+                                            <option value="제주">제주</option>
+                                            <option value="충남">충남</option>
+                                            <option value="충북">충북</option>
+                                            <option value="세종">세종</option>
+                                        </select>
+                                        <select name="" id="state">
+                                            <option value selected>군/구 선택</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><span class="required"></span>행정코드</th>
+                                <td colspan="3">
+                                    <div class="col-sm-9">
+                                        <input id="admcode" type="text" class="form-control" placeholder="" >
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><span class="required"></span>중형택시</th>
+                                <td colspan="3">
+                                    <div class="col-sm-9">
+                                        <select id="fare_type_1">
+                                            <option value="">--중형택시 선택 --</option>
+                                            <option th:each="val : ${fareList}" th:value="${val?.fareTypeNm}"
+                                                    th:utext="${val?.fareTypeNm}">
+                                            </option>
+                                        </select>
+<!--                                        <input id="fare_type_1" type="text" class="form-control" placeholder="">-->
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><span class="required"></span>대형,모범택시</th>
+                                <td colspan="3">
+                                    <div class="col-sm-9">
+                                        <select id="fare_type_2">
+                                            <option value="">--대형,모범택시 선택 --</option>
+                                            <option th:each="val : ${fareList}" th:value="${val?.fareTypeNm}"
+                                                    th:utext="${val?.fareTypeNm}">
+                                            </option>
+                                        </select>
+<!--                                        <input id="fare_type_2" type="text" class="form-control" placeholder="">-->
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><span class="required"></span>약자택시</th>
+                                <td colspan="3">
+                                    <div class="col-sm-9" style="width: 100%;">
+                                        <select id="fare_type_w">
+                                            <option value="">--약자택시 선택 --</option>
+                                            <option th:each="val : ${fareList}" th:value="${val?.fareTypeNm}"
+                                                    th:utext="${val?.fareTypeNm}">
+                                            </option>
+                                        </select>
+<!--                                        <input id="fare_type_w" type="text" class="form-control" placeholder="">-->
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><span class="required"></span>기타</th>
+                                <td colspan="3">
+                                    <div class="col-sm-9" style="width: 100%;">
+                                        <input id="fare_type_etc" type="text" class="form-control" placeholder="">
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" id="btnSubmit">등록</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script id="list-template" type="text/x-handlebars-template">
+        {{#each adminCodeList }}
+        <tr>
+            <td><input type="checkbox" value="{{id}}"></td>
+            <td id="areaName"><a href="javascript:commonAreaDetail('{{id}}')">{{depth1}}</a></td>
+            <td>{{depth2}}</td>
+            <td>{{admcode}}</td>
+            <td>{{fareType1}}</td>
+            <td>{{fareType2}}</td>
+            <td>{{fareTypeW}}</td>
+            <td>{{fareTypeEtc}}</td>
+        </tr>
+        {{else}}
+        <tr>
+            <td colspan="9" align="center">데이터를 조회 할 수 없습니다.</td>
+        </tr>
+        {{/each}}
+    </script>
+
+    <script type="text/javascript">
+
+        var search = {};
+
+        function fnSearch() {
+            var searchName = $('#searchName').val();
+            var searchCode = $('#searchCode').val();
+
+            search.searchName = searchName;
+            search.searchCode = searchCode;
+            search.currentPage = 1;
+            fire_ajax_submit(search, true);
+        }
+
+        function commonAreaDetail(id) {
+            var sessionUserAuth = "[[${session.LoginMembers.role}]]";
+            editType = "update";
+
+            $("h4.modal-title").text("영업행정지역 변경");
+
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                url: "/admincode/detail" + "?id=" + id,
+                success: function (data) {
+                    if (sessionUserAuth != "SUPER_ADMIN") {
+                        $("#btnSubmit").css("display", "none");
+                    } else {
+                        $("#btnSubmit").css("display", "inline-block");
+                    }
+                    $("#admcode").val(data.admcode);
+                    $("#fare_type_etc").val(data.fareTypeEtc);
+                    $("#id").val(data.id);
+                    $("#address").val(data.depth1);
+                    document.querySelector("#fare_type_1").value = data.fareType1;
+                    document.querySelector("#fare_type_2").value = data.fareType2;
+                    document.querySelector("#fare_type_w").value = data.fareTypeW;
+                    $("#address").attr("disabled", true);
+                    $("#state").attr("disabled", true);
+                    $("#admcode").attr("disabled", true);
+                    categoryChange(data);
+
+                }, error: function (e) {
+                    console.log(e);
+                }
+            });
+
+            $("#myModal").modal('show');
+        }
+
+        function fire_ajax_submit(search, refresh) {
+            $('#btnSearch').prop('disabled', true);
+
+            if (search == null || search == 'undefined' ) {
+                search = {};
+            }
+
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                url: "/admincode/search",
+                data: JSON.stringify(search),
+                dataType: 'json',
+                cache: false,
+                timeout: 600000,
+                success: function (data) {
+                    $('#btnSearch').removeAttr('disabled');
+
+                    window.totalSize = data.totalSize;
+                    window.positionCounter = window.totalSize - (search.currentPage - 1) * 10;
+
+                    var source = $("#list-template").html();
+                    var template = Handlebars.compile(source);
+                    var html = template(data);
+                    $('#dataList').html(html);
+
+                    if (refresh) {
+                        var totalSize = data.totalSize;
+                        var perpage =  10;
+                        var totalPages = (totalSize/perpage);
+                        if(totalSize % perpage > 0 || totalPages == 0) {
+                            totalPages = totalPages + 1;
+                        }
+                        // redraw
+                        window.defaultOps.totalPages = totalPages;
+                        $('#pagination').twbsPagination('destroy');
+                        $('#pagination').twbsPagination(window.defaultOps).on('page', window.pagingCallback);
+                    }
+                }, error: function (e) {
+                    //검색 버튼 활성화
+                    $('#btnSearch').removeAttr('disabled');
+                    console.dir(e);
+                }
+            });
+        }
+
+        window.onload = function() {
+
+            var sessionUserAuth = "[[${session.LoginMembers.role}]]";
+
+            if (!sessionUserAuth.includes("ADMIN")) {
+                $("#adminBtnGroup").css("display" , "none");
+            }
+
+            let visiblePages = 10;
+            let totalSize = "[[${totalSize}]]";
+            let perpage = "[[${perPage}]]";
+            let totalPages = (totalSize/perpage);
+            if(totalSize % perpage > 0 || totalPages == 0){
+                totalPages = totalPages + 1;
+            }
+
+            // Handlebar Counter
+            Handlebars.registerHelper('position', function() {
+                return window.positionCounter--;
+            });
+
+            // Paging Option
+            var defaultOps = {
+                totalPages: totalPages,
+                visiblePages: visiblePages,
+                startPage : 1,
+                first: "<<", last : ">>",
+                prev : "<", next : ">",
+                initiateStartPageClick: false,
+                onPageClick: function (event, page) {
+                    console.info(page + ' (from options)');
+                }
+            };
+
+            // Paging Callback Func
+            var pagingCallback = function (event, page) {
+                console.info(page + ' (from event listening)');
+                search.currentPage = page;
+                fire_ajax_submit(search);
+            };
+
+            window.defaultOps = defaultOps;
+            window.pagingCallback = pagingCallback;
+            window.totalSize = totalSize;
+            $('#pagination').twbsPagination(defaultOps).on('page', pagingCallback);
+
+
+            $("#btnAdd").click(function() {
+                editType = "add";
+                $("h4.modal-title").text('영업행정지역 등록');
+                if (sessionUserAuth != "SUPER_ADMIN") {
+                    $("#btnSubmit").css("display", "none");
+                } else {
+                    $("#btnSubmit").css("display", "inline-block");
+                }
+
+                $("#admcode").val("");
+                $("#fare_type_1").val("");
+                $("#fare_type_2").val("");
+                $("#fare_type_w").val("");
+                $("#fare_type_etc").val("");
+                $("#address").val("")
+                $("#state").val("");
+                $("#myModal").modal('show');
+                $("#address").removeAttr("disabled");
+                $("#state").removeAttr("disabled");
+                $("#admcode").removeAttr("disabled");
+            });
+
+            $("#del_btn").click(function() {
+                editType = "add";
+
+                $("#admcode").val("");
+                $("#fare_type_1").val("");
+                $("#fare_type_2").val("");
+                $("#fare_type_w").val("");
+                $("#fare_type_etc").val("");
+                $("#address").val("");
+                $("#state").val("");
+                $("#address").removeAttr("disabled");
+                $("#state").removeAttr("disabled");
+                $("#admcode").removeAttr("disabled");
+            });
+
+            $("#del_btn").click(function() {
+                let idxArray = new Array();
+
+                $("#dataList tr").find("input[type=checkbox]:checked").each(function () {
+                    idxArray.push(this.value);
+                });
+
+                if (idxArray.length > 0) {
+                    $.ajax({
+                        type: "POST",
+                        contentType: "application/json",
+                        url: "/common/delete",
+                        data: JSON.stringify({idxArray : idxArray}),
+                        dataType: 'json',
+                        async : true,
+                        success: function (data) {
+                            if (data.message=="SUCCESS") {
+                                alert("삭제되었습니다.");
+                                location.reload();
+                            }else{
+                                alert("삭제에 실패하였습니다.\n 관리자에게 문의해주세요.");
+                            }
+                        }, error: function (e) {
+                            console.log(e);
+                        }
+                    });
+                }
+            });
+
+
+            //확인 클릭시
+            $("#btnSubmit").click(function() {
+                var admcode = $('#admcode').val();
+                var address = $('#address option:selected').val();
+                var state = $('#state option:selected').val();
+                var chkStyle = /\d/;
+                if(address == null || address == '' || state == null || state == '') {
+                    alert('지역을 선택해주세요');
+                    return false;
+                }
+                if(admcode == null || admcode == '') {
+                    alert('코드를 입력해주세요');
+                    return false;
+                } else if(admcode.length != 10) {
+                    alert('10자리로 입력해주세요');
+                    return false;
+                } else if(!chkStyle.test(admcode)){
+                    alert('숫자만 입력해주세요');
+                    return false;
+                }
+                submitStart();
+
+            });
+
+            function submitStart() {
+                var data = {
+                    depth1 : $('#address option:selected').val(),
+                    depth2 : $('#state option:selected').val(),
+                    admcode : $('#admcode').val(),
+                    fare_type_1 : $('#fare_type_1').val(),
+                    fare_type_2 : $('#fare_type_2').val(),
+                    fare_type_w : $('#fare_type_w').val(),
+                    fare_type_etc : $('#fare_type_etc').val(),
+                    editType : editType,
+                    id :  $('#id').val()
+                };
+
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json",
+                    url: "/adminCode/edit",
+                    data: JSON.stringify(data),
+                    dataType: 'json',
+                    async : true,
+                    success: function (data) {
+                        if (data.message=="SUCCESS") {
+                            alert("등록되었습니다.");
+                            location.reload();
+                        } else {
+                            alert(data.message);
+
+                        }
+                    }, error: function (e) {
+                        console.log(e);
+                    }
+                });
+            }
+
+        }
+
+        function categoryChange(e) {
+            const state = document.getElementById("state");
+            const gangwon = ["전체","강릉","동해","삼척","속초","원주","춘천","태백","고성","양구","양양","영월","인제","정선","철원","평창","홍천","화천","횡성"];
+            const gyeonggi = ["전체","고양","과천","광명","광주","구리","군포","김포","남양주","동두천","부천시","성남","수원","시흥","안산","안성","안양","양주","오산","용인","의왕","의정부","이천","파주","평택","포천","하남","화성","가평","양평","여주","연천"];
+            const gyeongsangnam = ["전체","거제", "김해", "마산", "밀양", "사천", "양산", "진주", "진해", "창원", "통영", "거창", "고성", "남해", "산청", "의령", "창녕", "하동", "함안", "함양", "합천"];
+            const gyeongsangbuk = ["전체","경산","경주","구미","김천","문경","상주","안동","영주","영천","포항","고령","군위","봉화","성주","영덕","영양","예천","울릉","울진","의성","청도","청송","칠곡"];
+            const gwangju = ["전체","광산", "남구", "동구", "북구", "서구"];
+            const daegu = ["전체","남구", "달서구", "동구", "북구", "서구", "수성", "중구", "달성"];
+            const daejeon = ["전체","대덕", "동구", "서구", "유성", "중구"];
+            const busan = ["전체","강서","금정구","남구","동구","동래","부산진","북구","사상","사하","서구","수영","연제","영도","중구","해운대","기장"];
+            const seoul = ["전체","강남","강동구","강북","강서","관악","광진","구로","금천","노원","도봉","동대문","동작","마포","서대문","서초","성동","성북","송파","양천","영등포","용산","은평","종로","중구","중랑"];
+            const ulsan = ["전체","남구","동구","북구","중구","울주"];
+            const incheon = ["전체","계양","남구","남동","동구","부평","서구","연수","중구","강화","옹진"];
+            const jeonnam = ["전체","광양","나주","목포","순천","여수","강진","고흥","곡성","구례","담양","무안","보성","신안","영광","영암","완도","장성","장흥","진도","함평","해남","화순"];
+            const jeonbuk = ["전체","군산", "김제", "남원", "익산", "전주", "정읍", "고창", "무주군", "부안", "순창", "완주", "임실", "장수", "진안"];
+            const jeju = ["전체","서귀포","제주","남제주","북제주"];
+            const chungbuk = ["전체","제천","청주","충주","괴산","단양","보은","영동","옥천","음성","증평","진천","청원"];
+
+            if(e.value == undefined){
+                e.value = e.depth1;
+            }
+
+            if (e.value == "강원") {
+                add = gangwon;
+            } else if (e.value == "경기") {
+                add = gyeonggi;
+            } else if (e.value == "경남") {
+                add = gyeongsangnam;
+            } else if (e.value == "경북") {
+                add = gyeongsangbuk;
+            } else if (e.value == "광주") {
+                add = gwangju;
+            } else if (e.value == "대구") {
+                add = daegu;
+            } else if (e.value == "대전") {
+                add = daejeon;
+            } else if (e.value == "부산") {
+                add = busan;
+            } else if (e.value == "서울") {
+                add = seoul;
+            } else if (e.value == "울산") {
+                add = ulsan;
+            } else if (e.value == "인천") {
+                add = incheon;
+            } else if (e.value == "전남") {
+                add = jeonnam;
+            } else if (e.value == "전북") {
+                add = jeonbuk;
+            } else if (e.value == "제주") {
+                add = jeju;
+            } else if (e.value == "충남") {
+                add = chungnam;
+            } else if (e.value == "충북") {
+                add = chungbuk;
+            }
+
+            state.options.length = 1;
+            for (property in add) {
+                let opt = document.createElement("option");
+                opt.value = add[property];
+                opt.innerHTML = add[property];
+
+                state.appendChild(opt);
+            }
+            if(e.depth2!=undefined){
+                document.querySelector("#state").value = e.depth2;
+            }
+        }
+    </script>
+</div>
+</html>

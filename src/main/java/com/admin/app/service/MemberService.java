@@ -1,12 +1,12 @@
 package com.admin.app.service;
 
 import com.admin.app.dto.Member;
+import com.admin.app.dto.PagingInfo;
 import com.admin.app.mapper.MemberMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-
 
 @Service
 public class MemberService {
@@ -16,8 +16,8 @@ public class MemberService {
         this.memberMapper = memberMapper;
     }
 
-    public List<Member> getMemberList() {
-        return memberMapper.getMemberList();
+    public List<Member> getMemberList(PagingInfo pagingInfo) {
+        return memberMapper.getMemberList(pagingInfo);
     }
 
     public Member findUserByEmail(String email){
@@ -34,5 +34,11 @@ public class MemberService {
 
     public void deleteAuthUser(Map<String,Object> idxArray){
         memberMapper.deleteAuthUser(idxArray);
+    }
+
+    public Member checkPassword(String loginId){ return memberMapper.checkPassword(loginId); }
+
+    public void updateUserPassword(Member member){
+        memberMapper.updateUserPassword(member);
     }
 }

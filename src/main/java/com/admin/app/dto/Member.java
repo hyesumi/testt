@@ -13,4 +13,5 @@ public class Member {
     private String role;
     private String createdDt;
     private String useYn;
+    private String newpassword;
 }

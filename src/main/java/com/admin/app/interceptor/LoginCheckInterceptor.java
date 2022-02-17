@@ -28,6 +28,8 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
             printwriter.flush();
             printwriter.close();
             return false;
+        }else{
+            System.out.println(session.getMaxInactiveInterval());
         }
 
         return true;

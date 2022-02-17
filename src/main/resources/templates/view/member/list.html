@@ -20,6 +20,7 @@
                                 <thead>
                                 <tr>
                                     <th></th>
+                                    <th>번호</th>
                                     <th>아이디</th>
                                     <th>이름</th>
                                     <th>권한</th>
@@ -27,8 +28,9 @@
                                 </tr>
                                 </thead>
                                 <tbody id="dataList">
-                                <tr th:each="list : ${memberList}">
+                                <tr th:each="list,num : ${memberList}">
                                     <td><input type="checkbox" th:value="${list.id}" ></td>
+                                    <td th:text="${num.count}"></td>
                                     <td><a th:text="${list.loginId}" th:attr="onclick=|userAuthDetail('${list.loginId}')|" type="button"></a></td>
                                     <td><span th:text="${list.name}"></span></td>
                                     <td><span th:text="${list.role}"></span></td>
@@ -114,231 +116,288 @@
         </div>
     </div>
 
-    <script type="text/javascript">
-        // var search = {};
-        // let editType = "${editType}";
-        var userRoleId = "";
+<script id="list-template" type="text/x-handlebars-template">
+    {{#each memberList}}
+    <tr>
+        <td><input type="checkbox" value="{{id}}"></td>
+        <td>{{position @index}}</td>
+        <td id="userEmail"><a href="javascript:userAuthDetail('{{loginId}}')">{{loginId}}</a></td>
+        <td>{{name}}</td>
+        <td>{{role}}</td>
+        <td>{{createdDt}}</td>
+    </tr>
+    {{else}}
+    <tr>
+        <td colspan="6" align="center">데이터를 조회 할 수 없습니다.</td>
+    </tr>
+    {{/each}}
+</script>
 
-        function userAuthDetail(email) {
-            var sessionUserAuth = "[[${session.LoginMembers.role}]]";
-            editType = "update";
+<script type="text/javascript">
+    var search = {};
+    var userRoleId = "";
 
-            $("h4.modal-title").text("권한 변경");
-            $("#roleId option").not(":selected").attr("disabled", false);
-            $("#name").prop("readonly", true);
-            $("#id").prop("readonly", true);
-            $("#roleId").attr("disabled", false);
-            $("#message").hide();
+     function fnSearch() {
+         search.currentPage = 1;
+         fire_ajax_submit(search, true);
+     }
 
-            $.ajax({
-                type: "POST",
-                contentType: "application/json",
-                url: "/member/detail" + "?email=" + email,
-                success: function (data) {
-                    if (sessionUserAuth != "SUPER_ADMIN") {
-                        $("#btnSubmit").css("display", "none");
-                    } else {
-                        $("#btnSubmit").css("display", "inline-block");
-                    }
-                    // userRoleId = data.roleId;
-                    //userRoleId = data.role;
-                    $("#name").val(data.name);
-                    $("#id").val(data.loginId);
-                    $("#roleId").val(data.role);
-                    // previousRoleId = data.roleId;
-                    //previousRoleId = data.role;
-                }, error: function (e) {
-                    console.log(e);
+    function userAuthDetail(email) {
+        var sessionUserAuth = "[[${session.LoginMembers.role}]]";
+        editType = "update";
+
+        $("h4.modal-title").text("권한 변경");
+        $("#roleId option").not(":selected").attr("disabled", false);
+        $("#name").prop("readonly", true);
+        $("#id").prop("readonly", true);
+        $("#roleId").attr("disabled", false);
+        $("#message").hide();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "/member/detail" + "?email=" + email,
+            success: function (data) {
+                if (sessionUserAuth != "SUPER_ADMIN") {
+                    $("#btnSubmit").css("display", "none");
+                } else {
+                    $("#btnSubmit").css("display", "inline-block");
                 }
-            });
+                // userRoleId = data.roleId;
+                //userRoleId = data.role;
+                $("#name").val(data.name);
+                $("#id").val(data.loginId);
+                $("#roleId").val(data.role);
+                // previousRoleId = data.roleId;
+                //previousRoleId = data.role;
+            }, error: function (e) {
+                console.log(e);
+            }
+        });
 
-            $("#myModal").modal('show');
+        $("#myModal").modal('show');
+    }
+
+    function fire_ajax_submit(search, refresh) {
+        $('#btnSearch').prop('disabled', true);
+
+        if (search == null || search == 'undefined' ) {
+            search = {};
         }
 
-        window.onload = function() {
-            var sessionUserAuth = "[[${session.LoginMembers.role}]]";
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "/member/search",
+            data: JSON.stringify(search),
+            dataType: 'json',
+            cache: false,
+            timeout: 600000,
+            success: function (data) {
+                $('#btnSearch').removeAttr('disabled');
 
-            if (!sessionUserAuth.includes("ADMIN")) {
-                $("#adminBtnGroup").css("display" , "none");
-            }
+                window.totalSize = data.totalSize;
+                window.positionCounter = window.totalSize - (search.currentPage - 1) * 10;
 
-        //     $('div.right_col').on('mousedown', function(e) {
-        //         e.preventDefault();
-        //     });
-        //
-        //     var param = {};
-        //     param.userEmail = asciiToChar("${userEmail}");
-        //
-        //     var visiblePages = 10;
-        //     var totalSize = "${totalSize?if_exists}";
-        //     var perpage =  "${perPage?if_exists}";
-        //     var totalPages = (totalSize / perpage);
-        //
-        //     if (totalSize % perpage > 0 || totalPages == 0) {
-        //         totalPages = totalPages + 1;
-        //     }
-        //
-        //     // Handlebar Counter
-        //
-        //     Handlebars.registerHelper('position', function() {
-        //         return window.positionCounter--;
-        //     });
-        //
-        //     // Paging Option
-        //     var defaultOps = {
-        //         totalPages: totalPages,
-        //         visiblePages: visiblePages,
-        //         startPage : 1,
-        //         first: "<<", last : ">>",
-        //         prev : "<", next : ">",
-        //         initiateStartPageClick: false,
-        //         onPageClick: function (event, page) {
-        //             console.info(page + ' (from options)');
-        //         }
-        //     };
-        //
-        //     // Paging Callback Func
-        //     var pagingCallback = function (event, page) {
-        //         console.info(page + ' (from event listening)');
-        //         search.currentPage = page;
-        //         fire_ajax_submit(search);
-        //     };
-        //
-        //     window.defaultOps = defaultOps;
-        //     window.pagingCallback = pagingCallback;
-        //     window.totalSize = totalSize;
-        //     $('#pagination').twbsPagination(defaultOps).on('page', pagingCallback);
-        //
-            $("#btnAdd").click(function() {
-                editType = "add";
-                $("h4.modal-title").text('회원 등록');
-                $("#roleId").val("USER");
-                $("#name").val("");
-                $("#id").val("");
-                $("#roleId option").not(":selected").attr("disabled", "disabled");
-                $("#name").prop("readonly", false);
-                $("#id").prop("readonly", false);
-                //previousRoleId = null;
+                var source = $("#list-template").html();
+                var template = Handlebars.compile(source);
+                var html = template(data);
+                $('#dataList').html(html);
 
-                $("#myModal").modal('show');
-            });
-
-            $("#del_btn").click(function() {
-                editType = 'delete';
-                let idxArray = new Array();
-
-                $("#dataList tr").find("input[type=checkbox]:checked").each(function () {
-                    idxArray.push(this.value);
-                });
-
-                if (idxArray.length > 0) {
-                    $.ajax({
-                        type: "POST",
-                        contentType: "application/json",
-                        url: "/member/delete",
-                        data: JSON.stringify({idxArray : idxArray}),
-                        dataType: 'json',
-                        async : true,
-                        success: function (data) {
-                            if (data.message=="SUCCESS") {
-                                alert("삭제되었습니다.");
-                                location.reload();
-                            }else{
-                                alert("삭제에 실패하였습니다.\n 관리자에게 문의해주세요.");
-                            }
-                        }, error: function (e) {
-                            console.log(e);
-                        }
-                    });
-                }
-            });
-
-             //확인 클릭시
-            $("#btnSubmit").click(function() {
-                var roleId = $('#roleId').val();
-
-                if (roleId == null || roleId == '') {
-                    alert('권한을 선택해주세요');
-                    return false;
-                }
-                if($('#name').val() == null || $('#name').val() == '') {
-                    alert('이름을 입력해주세요');
-                    return false;
-                }
-                if($('#id').val() == null || $('#id').val() == '') {
-                    alert('아이디를 입력해주세요');
-                    return false;
-                }
-                // if($('#phone').val() == null || $('#email').val() == '') {
-                //     alert('핸드폰번호를 입력해주세요');
-                //     return false;
-                // }
-
-                var emailVal = $("#id").val();
-                // var phoneVal = $("#phone").val();
-                var regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
-
-                if (emailVal.length < 3) {
-                    alert("Email 은 3글자 이상 입력해야 합니다.");
-                    return false;
-                } else {
-                    if (emailVal.match(regExp) == null) {
-                        alert("올바른 Email 형식이 아닙니다. 다시 입력해주세요.");
-                        return false;
+                if (refresh) {
+                    var totalSize = data.totalSize;
+                    var perpage =  10;
+                    var totalPages = (totalSize/perpage);
+                    if(totalSize % perpage > 0 || totalPages == 0) {
+                        totalPages = totalPages + 1;
                     }
+                    // redraw
+                    window.defaultOps.totalPages = totalPages;
+                    $('#pagination').twbsPagination('destroy');
+                    $('#pagination').twbsPagination(window.defaultOps).on('page', window.pagingCallback);
                 }
+            }, error: function (e) {
+                //검색 버튼 활성화
+                $('#btnSearch').removeAttr('disabled');
+                console.dir(e);
+            }
+        });
+    }
 
-                // if(editType != "update"){
-                //     regExp = /^01([0|1|6|7|8|9]?)?([0-9]{3,4})?([0-9]{4})$/;
-                //
-                //     if (phoneVal.match(regExp) == null) {
-                //         alert("올바른 핸드폰번호 형식이 아닙니다. 다시 입력해주세요.");
-                //         return false;
-                //     }
-                // }
+    window.onload = function() {
+        var sessionUserAuth = "[[${session.LoginMembers.role}]]";
 
-                // if(roleId != userRoleId){
-                //     submitStart();
-                // } else {
-                //     $("#modal").modal('hide');
-                // }
+        if (!sessionUserAuth.includes("ADMIN")) {
+            $("#adminBtnGroup").css("display" , "none");
+        }
 
-                submitStart();
+        let visiblePages = 10;
+        let totalSize = "[[${totalSize}]]";
+        let perpage = "[[${perPage}]]";
+        let totalPages = (totalSize/perpage);
+        if(totalSize % perpage > 0 || totalPages == 0){
+            totalPages = totalPages + 1;
+        }
 
+        // Handlebar Counter
+        Handlebars.registerHelper('position', function() {
+            return window.positionCounter--;
+        });
+
+        // Paging Option
+        var defaultOps = {
+            totalPages: totalPages,
+            visiblePages: visiblePages,
+            startPage : 1,
+            first: "<<", last : ">>",
+            prev : "<", next : ">",
+            initiateStartPageClick: false,
+            onPageClick: function (event, page) {
+                console.info(page + ' (from options)');
+            }
+        };
+
+        // Paging Callback Func
+        var pagingCallback = function (event, page) {
+            console.info(page + ' (from event listening)');
+            search.currentPage = page;
+            fire_ajax_submit(search);
+        };
+
+        window.defaultOps = defaultOps;
+        window.pagingCallback = pagingCallback;
+        window.totalSize = totalSize;
+        $('#pagination').twbsPagination(defaultOps).on('page', pagingCallback);
+
+        $("#btnAdd").click(function() {
+            editType = "add";
+            $("h4.modal-title").text('회원 등록');
+            $("#roleId").val("USER");
+            $("#name").val("");
+            $("#id").val("");
+            $("#roleId option").not(":selected").attr("disabled", "disabled");
+            $("#name").prop("readonly", false);
+            $("#id").prop("readonly", false);
+            //previousRoleId = null;
+
+            $("#myModal").modal('show');
+        });
+
+        $("#del_btn").click(function() {
+            editType = 'delete';
+            let idxArray = new Array();
+
+            $("#dataList tr").find("input[type=checkbox]:checked").each(function () {
+                idxArray.push(this.value);
             });
 
-            function submitStart() {
-                var data = {
-                    role : $('#roleId').val(),
-                    loginId : $('#id').val(),
-                    name : $('#name').val(),
-                    // phoneNo : $('#phone').val(),
-                    // registerId : asciiToChar(userEmail),
-                    // previousRoleId : previousRoleId,
-                    editType : editType
-                };
-
+            if (idxArray.length > 0) {
                 $.ajax({
                     type: "POST",
                     contentType: "application/json",
-                    url: "/member/edit",
-                    data: JSON.stringify(data),
+                    url: "/member/delete",
+                    data: JSON.stringify({idxArray : idxArray}),
                     dataType: 'json',
                     async : true,
                     success: function (data) {
                         if (data.message=="SUCCESS") {
-                            alert("등록되었습니다.");
+                            alert("삭제되었습니다.");
                             location.reload();
-                        } else {
-                            alert("등록에 실패하였습니다.\n 관리자에게 문의해주세요.");
+                        }else{
+                            alert("삭제에 실패하였습니다.\n 관리자에게 문의해주세요.");
                         }
                     }, error: function (e) {
                         console.log(e);
                     }
                 });
             }
-        }
-    </script>
+        });
 
+         //확인 클릭시
+        $("#btnSubmit").click(function() {
+            var roleId = $('#roleId').val();
+
+            if (roleId == null || roleId == '') {
+                alert('권한을 선택해주세요');
+                return false;
+            }
+            if($('#name').val() == null || $('#name').val() == '') {
+                alert('이름을 입력해주세요');
+                return false;
+            }
+            if($('#id').val() == null || $('#id').val() == '') {
+                alert('아이디를 입력해주세요');
+                return false;
+            }
+            // if($('#phone').val() == null || $('#email').val() == '') {
+            //     alert('핸드폰번호를 입력해주세요');
+            //     return false;
+            // }
+
+            var emailVal = $("#id").val();
+            // var phoneVal = $("#phone").val();
+            var regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+
+            if (emailVal.length < 3) {
+                alert("Email 은 3글자 이상 입력해야 합니다.");
+                return false;
+            } else {
+                if (emailVal.match(regExp) == null) {
+                    alert("올바른 Email 형식이 아닙니다. 다시 입력해주세요.");
+                    return false;
+                }
+            }
+
+            // if(editType != "update"){
+            //     regExp = /^01([0|1|6|7|8|9]?)?([0-9]{3,4})?([0-9]{4})$/;
+            //
+            //     if (phoneVal.match(regExp) == null) {
+            //         alert("올바른 핸드폰번호 형식이 아닙니다. 다시 입력해주세요.");
+            //         return false;
+            //     }
+            // }
+
+            // if(roleId != userRoleId){
+            //     submitStart();
+            // } else {
+            //     $("#modal").modal('hide');
+            // }
+
+            submitStart();
+
+        });
+
+        function submitStart() {
+            var data = {
+                role : $('#roleId').val(),
+                loginId : $('#id').val(),
+                name : $('#name').val(),
+                // phoneNo : $('#phone').val(),
+                // registerId : asciiToChar(userEmail),
+                // previousRoleId : previousRoleId,
+                editType : editType
+            };
+
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                url: "/member/edit",
+                data: JSON.stringify(data),
+                dataType: 'json',
+                async : true,
+                success: function (data) {
+                    if (data.message=="SUCCESS") {
+                        alert("등록되었습니다.");
+                        location.reload();
+                    } else {
+                        alert("등록에 실패하였습니다.\n 관리자에게 문의해주세요.");
+                    }
+                }, error: function (e) {
+                    console.log(e);
+                }
+            });
+        }
+    }
+</script>
 </div>
 </html>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.admin.app.mapper.CommonAreaMapper">
+
+    <select id="getCommonBusinessAreaList" parameterType="PagingInfo" resultType="CommonArea">
+        SELECT
+            idx AS id,
+            common_business_area_name AS areaName,
+            common_business_area_code AS areaCode,
+            extra_data AS extraData,
+            effective_ts AS effectiveTs,
+            create_ts AS createTs
+        FROM taxi_common_business_area_tb
+        limit ${perPage} OFFSET ${(currentPage-1)*perPage}
+    </select>
+
+    <select id="findCommonAreaById" resultType="CommonArea" parameterType="String">
+        SELECT
+            common_business_area_name AS areaName,
+            common_business_area_code AS areaCode,
+            extra_data AS extraData,
+            effective_ts AS effectiveTs,
+            create_ts AS createTs
+        FROM taxi_common_business_area_tb
+            WHERE idx = #{id}
+    </select>
+
+    <update id="updateAuthAdminList" parameterType="Member">
+        UPDATE
+            auth_user
+            SET user_role = #{role}
+        WHERE user_email = #{loginId}
+    </update>
+
+    <insert id="insertAuthAdminList" parameterType="Member">
+        INSERT INTO auth_user
+        (
+        user_pw,
+        user_email,
+        user_name,
+        created_dt,
+        updated_dt,
+        use_yn,
+        user_role
+        )
+        VALUES
+        (
+        #{password},
+        #{loginId},
+        #{name},
+        now(),
+        now(),
+        'Y',
+        #{role}
+        )
+
+    </insert>
+
+    <delete id="deleteAuthUser" parameterType="java.util.Map">
+        DELETE
+        FROM auth_user
+        WHERE user_id IN
+        <foreach collection="idxArray" item="item" index="index" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="checkPassword" parameterType="String" resultType="Member">
+        SELECT
+            user_email AS loginId,
+            user_pw AS password
+        FROM auth_user
+        WHERE user_email = #{loginId}
+    </select>
+
+    <update id="updateUserPassword" parameterType="Member">
+        UPDATE
+            auth_user
+        SET user_pw = #{password}, updated_dt = now()
+        WHERE user_email = #{loginId}
+    </update>
+</mapper>

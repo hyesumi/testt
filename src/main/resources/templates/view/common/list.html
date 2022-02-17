@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div class="container-fluid">
+                <h1 class="h3 mb-2 text-gray-800">공동사업지구 관리</h1>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="x_panel">
+                            <div class="x_content">
+                                <table class="table table_custom">
+                                    <colgroup>
+                                        <col width="12%">
+                                        <col width="38%">
+                                        <col width="12%">
+                                        <col width="38%">
+                                    </colgroup>
+                                    <tbody>
+                                    <tr>
+                                        <th>지역명</th>
+                                        <td>
+                                            <input type="text" class="form-control" id="searchName" placeholder="">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>코드</th>
+                                        <td>
+                                            <input type="text" class="form-control" id="searchCode" placeholder="">
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="col-sm-12 button_group">
+                                    <div class="pull-right">
+                                        <button type="button" class="btn btn-primary" id="btnSearch" onclick="fnSearch()">검색</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+<!--                        <div class="card-header py-3">-->
+<!--                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>-->
+<!--                        </div>-->
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="70%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>번호</th>
+                                    <th>지역</th>
+                                    <th>코드</th>
+                                    <th>추가내용</th>
+                                    <th>반영일</th>
+                                    <th>등록일</th>
+                                </tr>
+                                </thead>
+                                <tbody id="dataList">
+                                <tr th:each="list,num : ${commonAreaList}">
+                                    <td><input type="checkbox" th:value="${list.id}" ></td>
+                                    <td th:text="${num.count}"></td>
+                                    <td><a th:text="${list.areaName}" th:attr="onclick=|commonAreaDetail('${list.id}')|" type="button"></a></td>
+                                    <td><span th:text="${list.areaCode}"></span></td>
+                                    <td><span th:text="${list.extraData}"></span></td>
+                                    <td><span th:text="${list.effectiveTs}"></span></td>
+                                    <td><span th:text="${list.createTs}"></span></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div class="col-sm-12">
+                                <div class="paging_simple_numbers" id="datatable-fixed-header_paginate">
+                                    <ul class="pagination" id="pagination"></ul>
+                                    <div class="pull-right">
+                                        <span id="adminBtnGroup">
+                                            <button type="button" class="btn btn-primary" id="btnAdd" data-target=".bs-example-modal-lg">등록</button>
+                                            <button type="button" class="btn btn-danger" id="del_btn">삭제</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">공동사업지구 등록</h4>
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body" id="modal_upload" >
+                        <table class="table table_custom" id="modal_table">
+                            <colgroup>
+                                <col width="20%">
+                                <col width="30%">
+                                <col width="20%">
+                                <col width="30%">
+                            </colgroup>
+                            <tbody id="modal_tbody">
+                            <tr>
+                                <th><span class="required"></span>지역</th>
+                                <td colspan="3">
+                                    <div class="col-sm-9">
+                                        <input id="area" type="text" class="form-control" placeholder="">
+                                    </div>
+                                    <button type="button" class="btn btn-primary" id="btnSearchCode">코드 조회</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><span class="required"></span>코드</th>
+                                <td colspan="3">
+                                    <div class="col-sm-9" style="width: 100%;">
+                                        <input id="code" type="text" class="form-control" placeholder="">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><span class="required"></span>추가내용</th>
+                                <td colspan="3">
+                                    <div class="col-sm-9" style="width: 100%;">
+                                        <textarea name="extraData" id="extraData" class="form-control" rows="12" style="width: 100% !important;" escapeXml="true"></textarea>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><span class="required"></span>반영일</th>
+                                <td>
+                                    <div class="form-group">
+                                        <div class='input-group date' id='datetimepicker1'>
+                                            <input type='text' class="form-control" id="effectiveTs" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                        <input type="checkbox" id="checkbox">
+                                        <label for="checkbox">즉시시행</label>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" id="btnSubmit">등록</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script id="list-template" type="text/x-handlebars-template">
+        {{#each commonAreaList }}
+        <tr>
+            <td><input type="checkbox" value="{{id}}"></td>
+            <td>{{position @index}}</td>
+            <td id="areaName"><a href="javascript:commonAreaDetail('{{id}}')">{{areaName}}</a></td>
+            <td>{{areaCode}}</td>
+            <td>{{extraData}}</td>
+            <td>{{effectiveTs}}</td>
+            <td>{{createTs}}</td>
+        </tr>
+        {{else}}
+        <tr>
+            <td colspan="6" align="center">데이터를 조회 할 수 없습니다.</td>
+        </tr>
+        {{/each}}
+    </script>
+
+    <script type="text/javascript">
+        $(function() {
+            $('#datetimepicker1').datetimepicker();
+        });
+
+        var search = {};
+
+        function fnSearch() {
+            search.currentPage = 1;
+            fire_ajax_submit(search, true);
+        }
+
+        function commonAreaDetail(id) {
+            var sessionUserAuth = "[[${session.LoginMembers.role}]]";
+            editType = "update";
+
+            $("h4.modal-title").text("공동사업지구 변경");
+
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                url: "/common/detail" + "?id=" + id,
+                success: function (data) {
+                    if (sessionUserAuth != "SUPER_ADMIN") {
+                        $("#btnSubmit").css("display", "none");
+                    } else {
+                        $("#btnSubmit").css("display", "inline-block");
+                    }
+                    $("#area").val(data.areaName);
+                    $("#code").val(data.areaCode);
+                    $("#extraData").val(data.extraData);
+                    $("#effectiveTs").val(data.effectiveTs);
+                }, error: function (e) {
+                    console.log(e);
+                }
+            });
+
+            $("#myModal").modal('show');
+        }
+
+        function fire_ajax_submit(search, refresh) {
+            $('#btnSearch').prop('disabled', true);
+
+            if (search == null || search == 'undefined' ) {
+                search = {};
+            }
+
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                url: "/member/search",
+                data: JSON.stringify(search),
+                dataType: 'json',
+                cache: false,
+                timeout: 600000,
+                success: function (data) {
+                    $('#btnSearch').removeAttr('disabled');
+
+                    window.totalSize = data.totalSize;
+                    window.positionCounter = window.totalSize - (search.currentPage - 1) * 10;
+
+                    var source = $("#list-template").html();
+                    var template = Handlebars.compile(source);
+                    var html = template(data);
+                    $('#dataList').html(html);
+
+                    if (refresh) {
+                        var totalSize = data.totalSize;
+                        var perpage =  10;
+                        var totalPages = (totalSize/perpage);
+                        if(totalSize % perpage > 0 || totalPages == 0) {
+                            totalPages = totalPages + 1;
+                        }
+                        // redraw
+                        window.defaultOps.totalPages = totalPages;
+                        $('#pagination').twbsPagination('destroy');
+                        $('#pagination').twbsPagination(window.defaultOps).on('page', window.pagingCallback);
+                    }
+                }, error: function (e) {
+                    //검색 버튼 활성화
+                    $('#btnSearch').removeAttr('disabled');
+                    console.dir(e);
+                }
+            });
+        }
+
+        window.onload = function() {
+
+            $("#checkbox").click(function(){
+                if(this.checked){
+                    document.querySelector("#effectiveTs").value = "0000-00-00 00:00:00";
+                    document.querySelector("#effectiveTs").disabled = true;
+                }else{
+                    document.querySelector("#effectiveTs").value = "";
+                    document.querySelector("#effectiveTs").disabled = false;
+                }
+            });
+
+            var sessionUserAuth = "[[${session.LoginMembers.role}]]";
+
+            if (!sessionUserAuth.includes("ADMIN")) {
+                $("#adminBtnGroup").css("display" , "none");
+            }
+
+            let visiblePages = 10;
+            let totalSize = "[[${totalSize}]]";
+            let perpage = "[[${perPage}]]";
+            let totalPages = (totalSize/perpage);
+            if(totalSize % perpage > 0 || totalPages == 0){
+                totalPages = totalPages + 1;
+            }
+
+            // Handlebar Counter
+            Handlebars.registerHelper('position', function() {
+                return window.positionCounter--;
+            });
+
+            // Paging Option
+            var defaultOps = {
+                totalPages: totalPages,
+                visiblePages: visiblePages,
+                startPage : 1,
+                first: "<<", last : ">>",
+                prev : "<", next : ">",
+                initiateStartPageClick: false,
+                onPageClick: function (event, page) {
+                    console.info(page + ' (from options)');
+                }
+            };
+
+            // Paging Callback Func
+            var pagingCallback = function (event, page) {
+                console.info(page + ' (from event listening)');
+                search.currentPage = page;
+                fire_ajax_submit(search);
+            };
+
+            window.defaultOps = defaultOps;
+            window.pagingCallback = pagingCallback;
+            window.totalSize = totalSize;
+            $('#pagination').twbsPagination(defaultOps).on('page', pagingCallback);
+            datepickerInit();
+
+            $("#btnAdd").click(function() {
+                editType = "add";
+                $("h4.modal-title").text('공동사업지구 등록');
+                if (sessionUserAuth != "SUPER_ADMIN") {
+                    $("#btnSubmit").css("display", "none");
+                } else {
+                    $("#btnSubmit").css("display", "inline-block");
+                }
+                $("#area").val("");
+                $("#code").val("");
+                $("#extraData").val("");
+                $("#effectiveTs").val("");
+
+
+                $("#myModal").modal('show');
+            });
+
+            function datepickerInit(){
+                $('#start_dt').datetimepicker({
+                    format: 'YYYY-MM-DD'
+                });
+            }
+
+            $("#del_btn").click(function() {
+                let idxArray = new Array();
+
+                $("#dataList tr").find("input[type=checkbox]:checked").each(function () {
+                    idxArray.push(this.value);
+                });
+
+                if (idxArray.length > 0) {
+                    $.ajax({
+                        type: "POST",
+                        contentType: "application/json",
+                        url: "/common/delete",
+                        data: JSON.stringify({idxArray : idxArray}),
+                        dataType: 'json',
+                        async : true,
+                        success: function (data) {
+                            if (data.message=="SUCCESS") {
+                                alert("삭제되었습니다.");
+                                location.reload();
+                            }else{
+                                alert("삭제에 실패하였습니다.\n 관리자에게 문의해주세요.");
+                            }
+                        }, error: function (e) {
+                            console.log(e);
+                        }
+                    });
+                }
+            });
+
+            //확인 클릭시
+            $("#btnSubmit").click(function() {
+
+                if($('#area').val() == null || $('#area').val() == '') {
+                    alert('지역을 입력해주세요');
+                    return false;
+                }
+                if($('#code').val() == null || $('#code').val() == '') {
+                    alert('아이디를 입력해주세요');
+                    return false;
+                }
+                submitStart();
+
+            });
+
+
+            function submitStart() {
+                var data = {
+                    areaName : $('#area').val(),
+                    areaCode : $('#code').val(),
+                    extraData : $('#extraData').val(),
+                    effectiveTs : $('#effectiveTs').val(),
+                    editType : editType
+                };
+
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json",
+                    url: "/common/edit",
+                    data: JSON.stringify(data),
+                    dataType: 'json',
+                    async : true,
+                    success: function (data) {
+                        if (data.message=="SUCCESS") {
+                            alert("등록되었습니다.");
+                            location.reload();
+                        } else {
+                            alert("등록에 실패하였습니다.\n 관리자에게 문의해주세요.");
+                        }
+                    }, error: function (e) {
+                        console.log(e);
+                    }
+                });
+            }
+
+            $("#btnSearchCode").click(function() {
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json",
+                    url: "/common/searchCode",
+                    data: JSON.stringify(data),
+                    dataType: 'json',
+                    async : true,
+                    success: function (data) {
+                        if (data.message=="SUCCESS") {
+                            alert("등록되었습니다.");
+                            location.reload();
+                        } else {
+                            alert("등록에 실패하였습니다.\n 관리자에게 문의해주세요.");
+                        }
+                    }, error: function (e) {
+                        console.log(e);
+                    }
+                });
+            });
+        }
+    </script>
+</div>
+</html>
